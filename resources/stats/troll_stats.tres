@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="EntityStats" load_steps=2 format=3 uid="uid://troll_stats"]
+
+[ext_resource type="Script" path="res://scripts/state/entity_stats.gd" id="1_stats"]
+
+[resource]
+script = ExtResource("1_stats")
+max_hp = 300.0
+move_speed = 130.0
+attack = 25.0
+defense = 10.0

@@ -1,0 +1,17 @@
+[gd_scene load_steps=5 format=3 uid="uid://game_v2"]
+
+[ext_resource type="Script" path="res://scenes/main/game_scene.gd" id="1_game"]
+[ext_resource type="PackedScene" path="res://scenes/entities/warrior.tscn" id="2_warrior"]
+[ext_resource type="PackedScene" path="res://scenes/entities/troll.tscn" id="3_troll"]
+[ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="4_hud"]
+
+[node name="GameScene" type="Node2D"]
+script = ExtResource("1_game")
+
+[node name="Warrior" parent="." instance=ExtResource("2_warrior")]
+position = Vector2(400, 360)
+
+[node name="Troll" parent="." instance=ExtResource("3_troll")]
+position = Vector2(900, 360)
+
+[node name="HUD" parent="." instance=ExtResource("4_hud")]
