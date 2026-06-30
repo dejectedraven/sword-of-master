@@ -1,50 +1,47 @@
-# 🗡️ GDC RPG Essentials Starter Kit
+# Sword of Master
 
-**Language:** English | [简体中文](README.zh-CN.md)
+2D 俯视角非对称竞技游戏 Demo。Godot 4.6 + GDScript。
 
-![Project Icon](icon.svg)
+![Warrior](assets/sprites/player/Warrior_Blue.png)
 
-This repository contains a lightweight Godot starter setup based on the Tiny Swords asset pack.
+## 玩法
 
-## 📦 Asset License Notes
+- **英雄**：WASD 移动 · 左键横斩 · 右键格挡（碎盾机制）· Space 冲锋
+- **巨魔**：追击 · 平砍 · Space 狂暴冲锋（无敌 + 震屏 + 力竭）
+- **胜负**：击杀对方即胜利
 
-Due to asset pack license restrictions, this repository only includes assets marked as CC0.
+## 运行
 
-You need to download the remaining assets manually from:
+1. 用 Godot 4.6 打开 `project.godot`
+2. F5 运行 → 选阵营 → 选角色 → 战斗
 
-https://pixelfrog-assets.itch.io/tiny-swords
+## 参数调校
 
-### 🔧 Assets To Add Manually
+改 `scripts/state/game_config.gd`，全部中文注释。
 
-- Bushe1
-- Bushe2
-- Bushe3
-- Tree3
-- Tree4
-- Water Foam
-- Clouds_01
-- Clouds_02
-- Clouds_03
-- Clouds_04
-- Clouds_05
-- Clouds_06
-- Clouds_07
-- Clouds_08
-- Shadow
-- Tilemap_color1
-- Tilemap_color3
-- Water Background color
+## 素材
 
-## 🧙 Current Player Prototype
+基于 Tiny Swords (Pixelfrog) 素材包。
+- Warrior_Blue/Red/Purple/Yellow：Kenney Tiny Swords Free & Main Pack
+- Troll_Idle/Walk/Attack/Dead/Recovery/Windup：Tiny Swords Enemy Pack
+- UI 按钮/面板：Tiny Swords Main Pack
+- 字体：PirataOne
 
-The project currently includes a basic player scene and script.
+## 更新日志
 
-- Scene: `res://scenes/entities/player/player.tscn`
-- Script: `res://scenes/entities/player/player.gd`
+详见 [CHANGELOG.md](CHANGELOG.md)
 
-![Player Preview](assets/sprites/player/Warrior_Blue.png)
+### 最新 [0.2.0] — 2026-06-29
+- 卡片式角色选择（滚轮切换 + 动画预览 + 敬请期待）
+- 巨魔死亡动画 + 力竭动画 + 全屏震屏
+- 阵营选择 UI（酒馆 / 魔王城）
+- 技能键位 Q → Space
+- 全文件 Tab 缩进修复
+- 格挡碎盾、攻击后摇、AI 协程重入修复
+- `game_config.gd` 统一数值中心
 
-### 🎮 Controls
-
-- Move: `W/A/S/D` ⌨️
-- Attack: Left mouse button 🖱️
+### [0.1.0] — 2026-06-28
+- 战士 vs 巨魔原型完成
+- 移动、横斩、格挡、冲锋、狂暴冲锋
+- AI 追击/平砍/撤退
+- HUD 血条 + 技能 CD 遮罩
