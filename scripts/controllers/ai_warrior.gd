@@ -57,7 +57,9 @@ func _slash():
 	if ab: await ab.use()
 	await get_tree().create_timer(entity._cv("attack_time")).timeout
 	entity.state = Entity.State.IDLE
+	entity._recovering = true
 	await get_tree().create_timer(GameConfig.warrior_ai_recover).timeout
+	entity._recovering = false
 	entity.play_anim("idle")
 	_attacking = false
 
@@ -71,6 +73,8 @@ func _use_charge():
 	if ab: await ab.use()
 	await get_tree().create_timer(entity._cv("attack_time")).timeout
 	entity.state = Entity.State.IDLE
+	entity._recovering = true
 	await get_tree().create_timer(GameConfig.warrior_ai_recover).timeout
+	entity._recovering = false
 	entity.play_anim("idle")
 	_attacking = false

@@ -46,6 +46,7 @@ max_hp = 250.0
 [node name="SlashAbility" type="Node" parent="."]
 script = ExtResource("3_slash")
 cooldown_time = 1.0
+hit_count = 3
 
 [node name="RushAbility" type="Node" parent="."]
 script = ExtResource("8_rush")

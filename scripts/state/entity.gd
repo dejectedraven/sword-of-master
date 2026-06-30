@@ -93,7 +93,8 @@ func _set_dead_anim():
 
 func _read_input():
 	if is_ai_controlled: return
-	if _exhausted: move_direction = Vector2.ZERO; return
+	if _exhausted or _recovering:
+		move_direction = Vector2.ZERO; return
 	if state == State.BLOCK: return _read_block_input()
 	if state == State.ATTACK: return
 	move_direction.x = int(Input.is_action_pressed("right")) - int(Input.is_action_pressed("left"))

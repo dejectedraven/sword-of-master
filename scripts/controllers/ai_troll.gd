@@ -56,9 +56,12 @@ func _slash():
 	entity.play_attack_anim(dir)
 	var ab = entity.get_node_or_null("SlashAbility") as AbilityBase
 	if ab: await ab.use()
+	_shake_cam()
 	await get_tree().create_timer(entity._cv("attack_time")).timeout
 	entity.state = Entity.State.IDLE
+	entity._recovering = true
 	await get_tree().create_timer(GameConfig.troll_ai_recover).timeout
+	entity._recovering = false
 	entity.play_anim("idle")
 	_attacking = false
 
@@ -71,6 +74,15 @@ func _use_rush():
 	var ab = entity.get_node_or_null("RushAbility") as AbilityBase
 	if ab: await ab.use()
 	entity.state = Entity.State.IDLE
-	await get_tree().create_timer(GameConfig.troll_ai_recover).timeout
 	entity.play_anim("idle")
+	await get_tree().create_timer(0.3).timeout
 	_attacking = false
+
+func _shake_cam():
+	var cam = entity.get_viewport().get_camera_2d()
+	if not cam: return
+	var orig = cam.offset
+	var t = create_tween()
+	t.tween_property(cam, "offset", orig + Vector2(randf_range(-3, 3), randf_range(-3, 3)), 0.03)
+	t.tween_property(cam, "offset", orig + Vector2(randf_range(-2, 2), randf_range(-2, 2)), 0.03)
+	t.tween_property(cam, "offset", orig, 0.06)

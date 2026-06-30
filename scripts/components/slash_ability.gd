@@ -1,6 +1,7 @@
 extends AbilityBase
 
 @export var range_length: float = 48.0
+@export var hit_count: int = 1
 
 var _hitbox: Area2D
 
@@ -17,7 +18,15 @@ func use() -> bool:
 	if not super.use(): return false
 	var dir = owner_entity.facing_direction
 	var dur = GameConfig.warrior_slash_duration if "Warrior" in owner_entity.name else GameConfig.troll_slash_duration
-	await _activate_hitbox(_hitbox, owner_entity.global_position + dir * 32, dir.angle(), dur)
+	var gap = dur * 0.6
+	for i in range(hit_count):
+		_hit_targets.clear()
+		_hitbox.global_position = owner_entity.global_position + dir * 32
+		_hitbox.rotation = dir.angle()
+		_hitbox.monitoring = true
+		await get_tree().create_timer(gap).timeout
+		_hitbox.monitoring = false
+		if i < hit_count - 1: await get_tree().create_timer(gap * 0.5).timeout
 	return true
 
 func _on_hitbox_body(body: Node):
