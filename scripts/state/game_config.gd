@@ -70,7 +70,7 @@ var warrior_ai_block_chance: float = 0.25     # 逃跑时格挡概率
 
 var troll_ai_attack_range: float = 80.0       # 平砍触发距离 (px)
 var troll_ai_windup: float = 0.5             # 攻击前摇 (秒)
-var troll_ai_recover: float = 4             # 攻击后摇 (秒)
+var troll_ai_recover: float = 2.5             # 攻击后摇 (秒)
 var troll_ai_retreat_hp: float = 0.2          # 低于此血量开始逃跑
 var troll_ai_retreat_out: float = 600.0       # 退到此距离才回头 (px)
 var troll_ai_skill_range: float = 250.0       # 技能触发距离 (px)

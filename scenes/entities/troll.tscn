@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://dxx_troll_v2"]
+[gd_scene load_steps=15 format=3 uid="uid://dxx_troll_v2"]
 
 [ext_resource type="Script" path="res://scripts/state/entity.gd" id="1_entity"]
 [ext_resource type="Script" path="res://scripts/components/health_component.gd" id="2_health"]
@@ -8,6 +8,8 @@
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/troll/Troll_Walk.png" id="6_walk"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/troll/Troll_Attack.png" id="7_attack"]
 [ext_resource type="Script" path="res://scripts/components/rush_ability.gd" id="8_rush"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/troll/Troll_Dead.png" id="9_dead"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/troll/Troll_Recovery.png" id="10_rec"]
 
 [sub_resource type="RectangleShape2D" id="shape_troll"]
 size = Vector2(64, 64)
@@ -18,9 +20,13 @@ stats = ExtResource("4_stats")
 idle_texture = ExtResource("5_idle")
 run_texture = ExtResource("6_walk")
 attack_texture = ExtResource("7_attack")
+dead_texture = ExtResource("9_dead")
+exhaust_texture = ExtResource("10_rec")
 idle_frames = 12
 run_frames = 10
 attack_frames = 6
+dead_frames = 10
+exhaust_frames = 10
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -50)

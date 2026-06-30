@@ -10,9 +10,13 @@ enum State { IDLE, RUN, ATTACK, BLOCK, DEAD }
 @export var idle_texture: Texture2D
 @export var run_texture: Texture2D
 @export var attack_texture: Texture2D
+@export var dead_texture: Texture2D
+@export var exhaust_texture: Texture2D
 @export var idle_frames: int = 6
 @export var run_frames: int = 6
 @export var attack_frames: int = 4
+@export var dead_frames: int = 10
+@export var exhaust_frames: int = 10
 
 var state: State = State.IDLE
 var facing_direction: Vector2 = Vector2.DOWN
@@ -53,6 +57,7 @@ func _ready():
 		health.current_hp = health.max_hp
 	health.died.connect(func():
 		state = State.DEAD
+		_set_dead_anim()
 		died.emit()
 	)
 	if idle_texture: sprite.texture = idle_texture; sprite.hframes = idle_frames
@@ -69,8 +74,22 @@ func _process(delta: float):
 		_block_cooldown -= delta
 		if _block_cooldown <= 0: _block_ready = true
 	if not anim_tree and state != State.DEAD:
+		if _exhausted and exhaust_texture:
+			sprite.texture = exhaust_texture
+			sprite.hframes = exhaust_frames
 		_frame_timer += delta
 		if _frame_timer >= 0.1: _frame_timer = 0.0; sprite.frame = (sprite.frame + 1) % sprite.hframes
+	elif not anim_tree and state == State.DEAD:
+		_frame_timer += delta
+		if _frame_timer >= 0.15 and sprite.frame < dead_frames - 1:
+			_frame_timer = 0.0; sprite.frame = min(sprite.frame + 1, dead_frames - 1)
+
+func _set_dead_anim():
+	if anim_tree: return
+	if dead_texture:
+		sprite.texture = dead_texture; sprite.hframes = dead_frames; sprite.frame = 0
+	elif exhaust_texture:
+		sprite.texture = exhaust_texture; sprite.hframes = exhaust_frames; sprite.frame = 0
 
 func _read_input():
 	if is_ai_controlled: return
@@ -110,7 +129,8 @@ func play_attack_anim(dir: Vector2):
 	if anim_tree:
 		anim_tree["parameters/attack/BlendSpace2D/blend_position"] = dir
 		anim_tree["parameters/playback"].travel("attack")
-	else: if attack_texture: sprite.texture = attack_texture; sprite.hframes = attack_frames; sprite.frame = 0
+	else:
+		if attack_texture: sprite.texture = attack_texture; sprite.hframes = attack_frames; sprite.frame = 0
 
 func _update_flip():
 	if state == State.ATTACK: return
@@ -125,7 +145,7 @@ func _input(event: InputEvent):
 			MOUSE_BUTTON_RIGHT: _start_blocking()
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.physical_keycode:
-			KEY_Q:
+			KEY_SPACE:
 				if get_node_or_null("ChargeAbility"): _try_charge()
 				elif get_node_or_null("RushAbility"): _try_rush()
 

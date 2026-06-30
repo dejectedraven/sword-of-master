@@ -22,7 +22,7 @@ func _create_skill_bar():
 	add_child(bar)
 	var vs = get_viewport().get_visible_rect().size
 	bar.position = Vector2(vs.x / 2 - 150, vs.y - 60)
-	for data in [["LMB", "Slash"], ["Q", "Skill"], ["RMB", "Block"]]:
+	for data in [["LMB", "Slash"], ["SPC", "Skill"], ["RMB", "Block"]]:
 		var inf = _make_slot(data[0], data[1])
 		bar.add_child(inf["panel"])
 		_skill_slots.append(inf["panel"])
@@ -58,12 +58,10 @@ func _update_hp():
 	if not scene: return
 	var warrior = scene.get_node_or_null("Warrior") as Entity
 	var troll = scene.get_node_or_null("Troll") as Entity
-
 	if warrior:
 		player_fill.size.x = 200 * warrior.health.hp_ratio()
 		player_label.text = "Warrior (YOU)" if not warrior.is_ai_controlled else "Warrior"
 		if not warrior.is_ai_controlled: _player_entity = warrior
-
 	if troll:
 		boss_fill.size.x = 300 * troll.health.hp_ratio()
 		var is_boss = GameState.selected_faction == GameState.Faction.BOSS
@@ -72,12 +70,10 @@ func _update_hp():
 
 func _update_skill_cd():
 	if not _player_entity or _skill_slots.size() < 3: return
-
 	var slash = _player_entity.get_node_or_null("SlashAbility") as AbilityBase
 	_skill_slots[0].visible = slash != null
 	if slash: _set_overlay(0, slash.is_on_cooldown, _cd_ratio(slash))
 	else: _set_overlay(0, false, 0.0)
-
 	var charge = _player_entity.get_node_or_null("ChargeAbility") as AbilityBase
 	var rush = _player_entity.get_node_or_null("RushAbility") as AbilityBase
 	var ab1 = charge if charge else rush
@@ -86,7 +82,6 @@ func _update_skill_cd():
 		(_skill_labels[1] as Label).text = "Rush" if rush else "Charge"
 	if ab1: _set_overlay(1, ab1.is_on_cooldown, _cd_ratio(ab1))
 	else: _set_overlay(1, false, 0.0)
-
 	var ok = _player_entity._block_ready
 	var r = 0.0
 	if not ok:

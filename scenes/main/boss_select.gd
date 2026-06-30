@@ -1,20 +1,32 @@
-extends CanvasLayer
+extends "res://scenes/main/character_select.gd"
 
 func _ready():
-    _bind("TrollBtn", "Troll", "巨魔", "高血量，狂暴冲锋")
-    var back = get_node_or_null("BackBtn")
-    if back: back.pressed.connect(func():
-        get_tree().change_scene_to_file("res://scenes/main/title_screen.tscn")
-    )
+	var tex = load("res://assets/sprites/enemies/troll/Troll_Idle.png")
+	setup_cards([
+	{
+	"id": "Troll",
+	"name": "巨魔",
+	"desc": "毁灭型魔王\n高血量，狂暴冲锋\n技能：横斩 + 狂暴冲锋 + 格挡",
+	"texture": tex,
+	"hframes": 12,
+	"idle_start": 0,
+	"idle_count": 12,
+	"scale": Vector2(0.6, 0.6),
+	"pos_y": get_viewport().get_visible_rect().size.y / 2 - 120,
+	"on_confirm": func(): _start_game("Troll"),
+	"on_back": func(): get_tree().change_scene_to_file("res://scenes/main/title_screen.tscn"),
+	},
+	{
+	"id": "",
+	"name": "???",
+	"desc": "敬请期待",
+	"locked": true,
+	"on_confirm": func(): pass,
+	"on_back": func(): get_tree().change_scene_to_file("res://scenes/main/title_screen.tscn"),
+	},
+	])
+	super._ready()
 
-func _bind(name: String, char: String, label: String, desc: String):
-    var btn = get_node_or_null(name)
-    if not btn: return
-    var lbl = btn.get_node_or_null("Label") as Label
-    var dsc = btn.get_node_or_null("Desc") as Label
-    if lbl: lbl.text = label
-    if dsc: dsc.text = desc
-    btn.pressed.connect(func():
-        GameState.selected_character = char
-        get_tree().change_scene_to_file("res://scenes/main/game_scene.tscn")
-    )
+func _start_game(char: String):
+	GameState.selected_character = char
+	get_tree().change_scene_to_file("res://scenes/main/game_scene.tscn")
