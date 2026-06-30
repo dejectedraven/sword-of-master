@@ -50,7 +50,6 @@ func use() -> bool:
 	owner_entity._invincible = false
 	owner_entity.move_direction = Vector2.ZERO
 	owner_entity.state = Entity.State.IDLE
-	owner_entity.play_anim("idle")
 
 	if cam:
 		var t = create_tween()

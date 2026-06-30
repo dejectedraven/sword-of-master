@@ -58,8 +58,8 @@ func _slash():
 	if ab: await ab.use()
 	await get_tree().create_timer(entity._cv("attack_time")).timeout
 	entity.state = Entity.State.IDLE
-	entity.play_anim("idle")
 	await get_tree().create_timer(GameConfig.troll_ai_recover).timeout
+	entity.play_anim("idle")
 	_attacking = false
 
 func _use_rush():
@@ -71,6 +71,6 @@ func _use_rush():
 	var ab = entity.get_node_or_null("RushAbility") as AbilityBase
 	if ab: await ab.use()
 	entity.state = Entity.State.IDLE
-	entity.play_anim("idle")
 	await get_tree().create_timer(GameConfig.troll_ai_recover).timeout
+	entity.play_anim("idle")
 	_attacking = false

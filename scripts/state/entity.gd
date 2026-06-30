@@ -74,7 +74,7 @@ func _process(delta: float):
 		_block_cooldown -= delta
 		if _block_cooldown <= 0: _block_ready = true
 	if not anim_tree and state != State.DEAD:
-		if _exhausted and exhaust_texture:
+		if (_exhausted or _recovering) and exhaust_texture:
 			sprite.texture = exhaust_texture
 			sprite.hframes = exhaust_frames
 		_frame_timer += delta
@@ -157,10 +157,11 @@ func _try_attack():
 	play_attack_anim(_aim_dir())
 	await ab.use()
 	await get_tree().create_timer(_cv("attack_time")).timeout
-	state = State.IDLE; play_anim("idle")
+	state = State.IDLE
 	_recovering = true
 	await get_tree().create_timer(_cv("recover_time")).timeout
 	_recovering = false
+	play_anim("idle")
 
 func _try_charge():
 	if state in [State.ATTACK, State.BLOCK]: return
@@ -170,10 +171,11 @@ func _try_charge():
 	play_attack_anim(_aim_dir())
 	await ab.use()
 	await get_tree().create_timer(_cv("attack_time")).timeout
-	state = State.IDLE; play_anim("idle")
+	state = State.IDLE
 	_recovering = true
 	await get_tree().create_timer(_cv("recover_time")).timeout
 	_recovering = false
+	play_anim("idle")
 
 func _try_rush():
 	if state in [State.ATTACK, State.BLOCK]: return
