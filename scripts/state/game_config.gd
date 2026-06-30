@@ -27,6 +27,27 @@ var warrior_block_speed: float = 0.4     # 格挡时移速倍率
 var warrior_attack_time: float = 0.6     # 攻击动画时长 (秒)
 var warrior_recover_time: float = 0.3    # 攻击后摇 (秒)
 
+# ═══════════ 英雄 - 弓箭手 (Archer) ═══════════
+
+var archer_hp: float = 60             # 最大生命
+var archer_speed: float = 220.0          # 移动速度 px/s
+var archer_attack: float = 12.0          # 射击伤害
+var archer_defense: float = 3.0          # 防御
+
+var archer_arrow_cooldown: float = 0.8   # 射击冷却 (秒)
+var archer_arrow_speed: float = 600.0    # 箭矢速度 px/s
+var archer_arrow_range: float = 500.0    # 箭矢最大射程 (px)
+
+var archer_dodge_cooldown: float = 5.0   # 翻滚冷却 (秒)
+var archer_dodge_distance: float = 120.0 # 翻滚距离 (px)
+
+var archer_block_cooldown: float = 3.0   # 盾碎后冷却 (秒)
+var archer_block_reduction: float = 0.8  # 减伤比例
+var archer_block_speed: float = 0.4      # 格挡时移速倍率
+
+var archer_attack_time: float = 0.4      # 射击动画时长 (秒)
+var archer_recover_time: float = 0.2     # 射击后摇 (秒)
+
 # ═══════════ Boss - 巨魔 (Troll) ═══════════
 
 var troll_hp: float = 300.0             # 最大生命
@@ -65,6 +86,17 @@ var warrior_ai_retreat_out: float = 500.0     # 退到此距离才回头 (px)
 var warrior_ai_skill_range: float = 180.0     # 技能触发距离 (px)
 var warrior_ai_skill_cd: float = 4.0          # 技能间隔 (秒)
 var warrior_ai_block_chance: float = 0.25     # 逃跑时格挡概率
+
+# ═══════════ AI - 弓箭手 ═══════════
+
+var archer_ai_attack_range: float = 350.0     # 射击触发距离 (px)
+var archer_ai_preferred_range: float = 200.0  # 保持距离 (px)
+var archer_ai_windup: float = 0.4             # 攻击前摇 (秒)
+var archer_ai_recover: float = 0.6            # 攻击后摇 (秒)
+var archer_ai_retreat_hp: float = 0.3          # 低于此血量开始逃跑
+var archer_ai_retreat_out: float = 500.0       # 退到此距离才回头 (px)
+var archer_ai_skill_range: float = 200.0       # 翻滚触发距离 (px)
+var archer_ai_skill_cd: float = 5.0            # 技能间隔 (秒)
 
 # ═══════════ AI - 巨魔 ═══════════
 

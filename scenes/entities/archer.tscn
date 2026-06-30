@@ -1,0 +1,40 @@
+[gd_scene load_steps=7 format=3 uid="uid://archer_v2"]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/player/Archer_Idle.png" id="1_idle"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/Archer_Run.png" id="2_run"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/Archer_Shoot.png" id="3_shoot"]
+[ext_resource type="Script" path="res://scripts/state/entity.gd" id="4_entity"]
+[ext_resource type="Script" path="res://scripts/components/health_component.gd" id="5_health"]
+[ext_resource type="Script" path="res://scripts/components/arrow_ability.gd" id="6_arrow"]
+[ext_resource type="Script" path="res://scripts/components/dodge_ability.gd" id="7_dodge"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_archer"]
+radius = 20.0
+
+[node name="Archer" type="CharacterBody2D"]
+script = ExtResource("4_entity")
+idle_texture = ExtResource("1_idle")
+run_texture = ExtResource("2_run")
+attack_texture = ExtResource("3_shoot")
+idle_frames = 6
+run_frames = 4
+attack_frames = 8
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -33)
+texture = ExtResource("1_idle")
+hframes = 6
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_archer")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+
+[node name="HealthComponent" type="Node" parent="."]
+script = ExtResource("5_health")
+
+[node name="ArrowAbility" type="Node" parent="."]
+script = ExtResource("6_arrow")
+
+[node name="DodgeAbility" type="Node" parent="."]
+script = ExtResource("7_dodge")

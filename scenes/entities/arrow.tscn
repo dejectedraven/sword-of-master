@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://arrow_v2"]
+
+[ext_resource type="Texture2D" path="res://assets/sprites/player/Arrow.png" id="1"]
+[ext_resource type="Script" path="res://scripts/components/arrow_bullet.gd" id="2"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_arrow"]
+size = Vector2(16, 8)
+
+[node name="Arrow" type="CharacterBody2D"]
+collision_layer = 0
+collision_mask = 3
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1")
+centered = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_arrow")

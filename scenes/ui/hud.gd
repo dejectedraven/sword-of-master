@@ -9,7 +9,12 @@ extends CanvasLayer
 var _skill_slots: Array = []
 var _skill_labels: Array = []
 var _skill_overlays: Array = []
-var _player_entity: Entity
+var _hero_entity: Entity
+var _boss_entity: Entity
+
+func setup_entities(hero: Entity, boss: Entity):
+	_hero_entity = hero
+	_boss_entity = boss
 
 func _ready():
 	result_label.hide()
@@ -54,40 +59,41 @@ func _process(_d: float):
 		result_label.text = "VICTORY!" if ((is_boss and not hw) or (not is_boss and hw)) else "DEFEATED..."
 
 func _update_hp():
-	var scene = get_tree().current_scene
-	if not scene: return
-	var warrior = scene.get_node_or_null("Warrior") as Entity
-	var troll = scene.get_node_or_null("Troll") as Entity
-	if warrior:
-		player_fill.size.x = 200 * warrior.health.hp_ratio()
-		player_label.text = "Warrior (YOU)" if not warrior.is_ai_controlled else "Warrior"
-		if not warrior.is_ai_controlled: _player_entity = warrior
-	if troll:
-		boss_fill.size.x = 300 * troll.health.hp_ratio()
-		var is_boss = GameState.selected_faction == GameState.Faction.BOSS
-		boss_label.text = "Troll (YOU)" if is_boss else "Troll"
-		if is_boss: _player_entity = troll
+	if not _hero_entity or not _boss_entity: return
+	var is_boss = GameState.selected_faction == GameState.Faction.BOSS
+	if is_boss:
+		player_fill.size.x = 200 * _boss_entity.health.hp_ratio()
+		player_label.text = "Troll (YOU)"
+		boss_fill.size.x = 300 * _hero_entity.health.hp_ratio()
+		boss_label.text = _hero_entity.name
+	else:
+		player_fill.size.x = 200 * _hero_entity.health.hp_ratio()
+		player_label.text = _hero_entity.name + " (YOU)"
+		boss_fill.size.x = 300 * _boss_entity.health.hp_ratio()
+		boss_label.text = _boss_entity.name
 
 func _update_skill_cd():
-	if not _player_entity or _skill_slots.size() < 3: return
-	var slash = _player_entity.get_node_or_null("SlashAbility") as AbilityBase
-	_skill_slots[0].visible = slash != null
+	var player = _boss_entity if GameState.selected_faction == GameState.Faction.BOSS else _hero_entity
+	if not player or _skill_slots.size() < 3: return
+	var slash = player.get_node_or_null("SlashAbility") as AbilityBase
+	var arrow = player.get_node_or_null("ArrowAbility") as AbilityBase
+	_skill_slots[0].visible = slash != null or arrow != null
 	if slash: _set_overlay(0, slash.is_on_cooldown, _cd_ratio(slash))
+	elif arrow: _set_overlay(0, arrow.is_on_cooldown, _cd_ratio(arrow))
 	else: _set_overlay(0, false, 0.0)
-	var charge = _player_entity.get_node_or_null("ChargeAbility") as AbilityBase
-	var rush = _player_entity.get_node_or_null("RushAbility") as AbilityBase
-	var ab1 = charge if charge else rush
+	var charge = player.get_node_or_null("ChargeAbility") as AbilityBase
+	var rush = player.get_node_or_null("RushAbility") as AbilityBase
+	var dodge = player.get_node_or_null("DodgeAbility") as AbilityBase
+	var ab1 = charge if charge else (rush if rush else dodge)
 	_skill_slots[1].visible = ab1 != null
 	if ab1 and _skill_labels.size() > 1:
-		(_skill_labels[1] as Label).text = "Rush" if rush else "Charge"
+		(_skill_labels[1] as Label).text = "Rush" if rush else ("Dodge" if dodge else "Charge")
 	if ab1: _set_overlay(1, ab1.is_on_cooldown, _cd_ratio(ab1))
 	else: _set_overlay(1, false, 0.0)
-	var ok = _player_entity._block_ready
+	var ok = player._block_ready
 	var r = 0.0
 	if not ok:
-		var w = "Warrior" in _player_entity.name
-		var cd = GameConfig.warrior_block_cooldown if w else GameConfig.troll_block_cooldown
-		r = _player_entity._block_cooldown / max(0.001, cd)
+		r = player._block_cooldown / max(0.001, player._cv("block_cooldown"))
 	_set_overlay(2, not ok, r)
 
 func _cd_ratio(ab: AbilityBase) -> float:

@@ -1,5 +1,20 @@
 # 更新日志
 
+## [0.3.0] — 2026-06-30
+
+### ✨ 新增
+- **弓箭手角色**：全新远程英雄，6 帧待机/4 帧跑步/8 帧射击动画（Blue Archer）
+- **远程射击**：LMB 射箭，箭矢飞行 600px/s，Tween 驱动 + Raycast 碰撞检测
+- **翻滚技能**：SPC 向前翻滚 120px，0.12s 无敌帧，CD 5s
+- **弓箭手 AI**：保持距离（200px）→ 350px 射击 → 近身翻滚逃跑 → 低血撤退
+- **动态角色系统**：`game_scene.gd` 改为根据 `selected_character` 动态实例化英雄场景，任意新英雄只需加 .tscn 和 AI 即可接入
+- **HUD 自动适配**：技能栏动态检测 Arrow/Slash/Charge/Dodge/RushAbility，按角色显示对应标签
+- **通用 _cv() 模式**：entity.gd 用 `游戏配置.get(前缀_key)` 统一查参，新增角色只需加前缀
+
+### 🔧 修复
+- 箭矢子弹改为全部在 arrow_ability.gd 内联生成（放弃独立 .tscn 因节点 `_process` 不触发）
+- DodgeAbility 撞墙预防（raycast 检测墙壁）
+
 ## [0.2.0] — 2026-06-29
 
 ### ✨ 新增

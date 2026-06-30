@@ -37,17 +37,9 @@ var _exhausted: bool = false
 signal died()
 
 func _cv(key: String):
-	var w = "Warrior" in name
-	match key:
-		"hp": return GameConfig.warrior_hp if w else GameConfig.troll_hp
-		"speed": return GameConfig.warrior_speed if w else GameConfig.troll_speed
-		"defense": return GameConfig.warrior_defense if w else GameConfig.troll_defense
-		"block_speed": return GameConfig.warrior_block_speed if w else GameConfig.troll_block_speed
-		"block_cooldown": return GameConfig.warrior_block_cooldown if w else GameConfig.troll_block_cooldown
-		"block_reduction": return GameConfig.warrior_block_reduction if w else GameConfig.troll_block_reduction
-		"attack_time": return GameConfig.warrior_attack_time if w else GameConfig.troll_attack_time
-		"recover_time": return GameConfig.warrior_recover_time if w else GameConfig.troll_recover_time
-		_: return 0.0
+	var prefix = "archer" if "Archer" in name else ("warrior" if "Warrior" in name else "troll")
+	var v = GameConfig.get(prefix + "_" + key)
+	return v if v != null else 0.0
 
 func _ready():
 	if anim_tree: anim_tree.active = true
@@ -148,11 +140,13 @@ func _input(event: InputEvent):
 		match event.physical_keycode:
 			KEY_SPACE:
 				if get_node_or_null("ChargeAbility"): _try_charge()
+				elif get_node_or_null("DodgeAbility"): _try_dodge()
 				elif get_node_or_null("RushAbility"): _try_rush()
 
 func _try_attack():
 	if state in [State.ATTACK, State.BLOCK]: return
-	var ab = get_node_or_null("SlashAbility") as AbilityBase
+	var ab = get_node_or_null("ArrowAbility") as AbilityBase
+	if not ab: ab = get_node_or_null("SlashAbility") as AbilityBase
 	if not ab: return
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
@@ -181,6 +175,15 @@ func _try_charge():
 func _try_rush():
 	if state in [State.ATTACK, State.BLOCK]: return
 	var ab = get_node_or_null("RushAbility") as AbilityBase
+	if not ab: return
+	_face_mouse(); state = State.ATTACK
+	play_attack_anim(_aim_dir())
+	await ab.use()
+	state = State.IDLE; play_anim("idle")
+
+func _try_dodge():
+	if state in [State.ATTACK, State.BLOCK]: return
+	var ab = get_node_or_null("DodgeAbility") as AbilityBase
 	if not ab: return
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
