@@ -33,7 +33,7 @@ func _setup_hero_mode():
 		_heroes_alive += 1
 	troll_entity = _spawn("Troll", Vector2(900, 360), true)
 	troll_entity.health.died.connect(_on_troll_died)
-	$HUD.setup(hero_entity, troll_entity, [])
+	$HUD.setup(hero_entity, troll_entity, ai_allies, [])
 
 func _setup_boss_mode():
 	troll_entity = _spawn("Troll", Vector2(900, 360), false)

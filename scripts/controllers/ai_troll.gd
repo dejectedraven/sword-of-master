@@ -40,7 +40,7 @@ func _find_target():
 	var scene = get_tree().current_scene
 	if not scene: return
 	for c in scene.get_children():
-		if c is Entity and "Troll" not in c.name and not c.is_ai_controlled:
+		if c is Entity and "Troll" not in c.name and not c.health.is_dead:
 			target = c
 			return
 
