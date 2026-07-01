@@ -1,7 +1,7 @@
 extends Node
 
 enum VictoryType { NONE, HERO_WIN, TROLL_WIN }
-enum Faction { HERO, BOSS }
+enum Faction { HERO, BOSS, SPECTATE }
 
 var selected_faction: Faction = Faction.HERO
 var selected_character: String = "Warrior"
@@ -16,6 +16,5 @@ func end_game(type: VictoryType):
 func reset():
 	selected_faction = Faction.HERO
 	selected_character = "Warrior"
-	last_selected_hero = "Warrior"
 	is_game_over = false
 	victory_type = VictoryType.NONE

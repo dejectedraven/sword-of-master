@@ -54,14 +54,25 @@ func _process(_d: float):
 	_update_skill_cd()
 	if GameState.is_game_over:
 		result_label.show()
-		var is_boss = GameState.selected_faction == GameState.Faction.BOSS
+		var mode = GameState.selected_faction
 		var hw = GameState.victory_type == GameState.VictoryType.HERO_WIN
-		result_label.text = "VICTORY!" if ((is_boss and not hw) or (not is_boss and hw)) else "DEFEATED..."
+		if mode == GameState.Faction.SPECTATE:
+			result_label.text = "Hero Wins!" if hw else "Troll Wins!"
+		else:
+			var is_boss = mode == GameState.Faction.BOSS
+			result_label.text = "VICTORY!" if ((is_boss and not hw) or (not is_boss and hw)) else "DEFEATED..."
 
 func _update_hp():
 	if not _hero_entity or not _boss_entity: return
-	var is_boss = GameState.selected_faction == GameState.Faction.BOSS
-	if is_boss:
+	var mode = GameState.selected_faction
+	var is_boss = mode == GameState.Faction.BOSS
+	var is_spectate = mode == GameState.Faction.SPECTATE
+	if is_spectate:
+		player_fill.size.x = 200 * _hero_entity.health.hp_ratio()
+		player_label.text = _hero_entity.name
+		boss_fill.size.x = 300 * _boss_entity.health.hp_ratio()
+		boss_label.text = _boss_entity.name
+	elif is_boss:
 		player_fill.size.x = 200 * _boss_entity.health.hp_ratio()
 		player_label.text = "Troll (YOU)"
 		boss_fill.size.x = 300 * _hero_entity.health.hp_ratio()
@@ -73,7 +84,11 @@ func _update_hp():
 		boss_label.text = _boss_entity.name
 
 func _update_skill_cd():
-	var player = _boss_entity if GameState.selected_faction == GameState.Faction.BOSS else _hero_entity
+	var mode = GameState.selected_faction
+	if mode == GameState.Faction.SPECTATE:
+		for i in 3: _set_overlay(i, false, 0.0)
+		return
+	var player = _boss_entity if mode == GameState.Faction.BOSS else _hero_entity
 	if not player or _skill_slots.size() < 3: return
 	var slash = player.get_node_or_null("SlashAbility") as AbilityBase
 	var arrow = player.get_node_or_null("ArrowAbility") as AbilityBase

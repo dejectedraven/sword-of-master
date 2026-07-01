@@ -4,6 +4,7 @@
 
 ### ✨ 新增
 - **弓箭手角色**：全新远程英雄，6 帧待机/4 帧跑步/8 帧射击动画（Blue Archer）
+- **观战模式 (AI vs AI)**：标题画面新增"观战"按钮，双 AI 自动对战
 - **远程射击**：LMB 射箭，箭矢飞行 600px/s，Tween 驱动 + Raycast 碰撞检测
 - **翻滚技能**：SPC 向前翻滚 120px，0.12s 无敌帧，CD 5s
 - **弓箭手 AI**：保持距离（200px）→ 350px 射击 → 近身翻滚逃跑 → 低血撤退
@@ -15,6 +16,7 @@
 - 箭矢子弹改为全部在 arrow_ability.gd 内联生成（放弃独立 .tscn 因节点 `_process` 不触发）
 - DodgeAbility 撞墙预防（raycast 检测墙壁）
 - Boss 模式敌人英雄固定为上次选的英雄（`last_selected_hero`），不再硬编码为 Warrior
+- `GameState.reset()` 不再清空 `last_selected_hero`，跨局保留
 
 ## [0.2.0] — 2026-06-29
 

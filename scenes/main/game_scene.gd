@@ -10,8 +10,9 @@ func _ready():
 	_instantiate_characters()
 
 func _instantiate_characters():
-	var is_boss = GameState.selected_faction == GameState.Faction.BOSS
-	var hero_id = GameState.selected_character if not is_boss else GameState.last_selected_hero
+	var mode = GameState.selected_faction
+	var hero_id = GameState.selected_character if mode != GameState.Faction.SPECTATE else GameState.last_selected_hero
+	hero_id = hero_id if mode != GameState.Faction.BOSS else GameState.last_selected_hero
 	var hero_scene = load("res://scenes/entities/" + hero_id.to_lower() + ".tscn")
 	hero_entity = hero_scene.instantiate()
 	hero_entity.name = hero_id
@@ -27,21 +28,27 @@ func _instantiate_characters():
 func _setup_characters():
 	hero_entity.collision_layer = 1; hero_entity.collision_mask = 2
 	troll_entity.collision_layer = 1; troll_entity.collision_mask = 2
-	var is_boss = GameState.selected_faction == GameState.Faction.BOSS
-	if is_boss:
+	var mode = GameState.selected_faction
+	var is_boss = mode == GameState.Faction.BOSS
+	var is_spectate = mode == GameState.Faction.SPECTATE
+	if is_spectate:
+		hero_entity.is_ai_controlled = true
+		hero_entity.add_child(_load_ai(hero_entity.name))
+		troll_entity.is_ai_controlled = true
+		troll_entity.add_child(load("res://scripts/controllers/ai_troll.gd").new())
+		hero_entity.get_node("Camera2D").make_current()
+	elif is_boss:
 		troll_entity.is_ai_controlled = false
 		troll_entity.get_node("Camera2D").make_current()
 		hero_entity.is_ai_controlled = true
 		hero_entity.add_child(_load_ai(hero_entity.name))
-		troll_entity.health.died.connect(_on_troll_died)
-		hero_entity.health.died.connect(_on_hero_died)
 	else:
 		hero_entity.is_ai_controlled = false
 		hero_entity.get_node("Camera2D").make_current()
 		troll_entity.is_ai_controlled = true
 		troll_entity.add_child(load("res://scripts/controllers/ai_troll.gd").new())
-		hero_entity.health.died.connect(_on_hero_died)
-		troll_entity.health.died.connect(_on_troll_died)
+	hero_entity.health.died.connect(_on_hero_died)
+	troll_entity.health.died.connect(_on_troll_died)
 	var hud = $HUD
 	hud.setup_entities(hero_entity, troll_entity)
 
