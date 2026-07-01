@@ -48,6 +48,7 @@
 - AI 队友/敌方系统（英雄模式 1 队友，Boss 模式 2 敌人）
 - 动态角色系统 + HUD 自动适配
 - 通用 _cv() 参数查询 + GameConfig 统一调参
+- 巨魔技能重做：LMB 单次快速攻击 + RMB 三连击（ComboAbility）
 - 新增角色指南 docs/ADDING_CHARACTER.md
 
 ### [0.2.0] — 2026-06-29

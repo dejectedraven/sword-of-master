@@ -153,14 +153,24 @@ var m = {
 
 #### E. `scenes/ui/hud.gd` — 技能标签适配
 
-`_update_skill_cd()` 里检测新能力节点。如果你有自定义技能名（非 Slash/Arrow/Charge/Dodge/Rush），加一行：
+`_update_skill_cd()` 里检测新能力节点。3 个 slot 对应：
+
+| Slot | 触发键 | 检测优先级 |
+|------|--------|-----------|
+| 0 | LMB | SlashAbility / ArrowAbility |
+| 1 | SPC | ChargeAbility / RushAbility / DodgeAbility |
+| 2 | RMB | ComboAbility（若存在则显示 combo CD，否则显示格挡 CD） |
+
+如果你有自定义技能名（非 Slash/Arrow/Charge/Dodge/Rush/Combo），加一行：
 
 ```gdscript
 var stab = player.get_node_or_null("StabAbility") as AbilityBase
 # ...在对应 slot 判断 stab
 ```
 
-Abilities 节点命名模式 `<Name>Ability`，HUD 当前已支持自动检测 SlashAbility/ArrowAbility/ChargeAbility/DodgeAbility/RushAbility。新技能只需遵循此命名即可直接识别。
+**RMB slot 特殊逻辑**：若有 `ComboAbility` 子节点，slot2 自动切换为 combo CD 遮罩 + 标签 "Combo"；若不存在则退化为格挡 CD。Boss 角色如果取消格挡改用 combo，无需改 HUD。
+
+Abilities 节点命名模式 `<Name>Ability`，HUD 当前已支持自动检测：SlashAbility / ArrowAbility / ChargeAbility / DodgeAbility / RushAbility / ComboAbility。
 
 ### 6. 无需修改的文件
 
@@ -209,4 +219,4 @@ Abilities 节点命名模式 `<Name>Ability`，HUD 当前已支持自动检测 S
 |------|------|---------|--------|-----------|
 | Warrior | 英雄 | AnimationTree 6×8 组合图 | Slash + Charge + Block | `ai_warrior.gd` |
 | Archer | 英雄 | Sprite2D 分条带帧循环 | Arrow + Dodge + Block | `ai_archer.gd` |
-| Troll | Boss | Sprite2D 帧循环 | Slash + Rush + Block | `ai_troll.gd` |
+| Troll | Boss | Sprite2D 帧循环 | Slash(LMB) + Combo(RMB) + Rush(SPC) | `ai_troll.gd` |

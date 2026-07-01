@@ -12,6 +12,7 @@
 - **HUD 自动适配**：技能栏动态检测 Arrow/Slash/Charge/Dodge/RushAbility，按角色显示对应标签
 - **通用 _cv() 模式**：entity.gd 用 `游戏配置.get(前缀_key)` 统一查参，新增角色只需加前缀
 - **新增角色指南**：`docs/ADDING_CHARACTER.md` 记录英雄/Boss 新增全流程与文件清单
+- **巨魔技能重做**：LMB 改为单次快速攻击（低后摇、无喘息）；RMB 改为三连击（ComboAbility，三段伤害 + 后摇 + 喘息 + 禁步）
 
 ### 🔧 修复
 - 箭矢子弹改为全部在 arrow_ability.gd 内联生成（放弃独立 .tscn 因节点 `_process` 不触发）
