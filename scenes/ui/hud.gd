@@ -130,9 +130,14 @@ func _update_skill_cd():
 	else: _set_overlay(1, false, 0.0)
 	var ok = player._block_ready
 	var r = 0.0
-	if not ok:
-		r = player._block_cooldown / max(0.001, player._cv("block_cooldown"))
-	_set_overlay(2, not ok, r)
+	var combo = player.get_node_or_null("ComboAbility") as AbilityBase
+	if combo:
+		r = combo.current_cooldown / max(0.001, combo.cooldown_time) if combo.is_on_cooldown else 0.0
+		if _skill_labels.size() > 2: (_skill_labels[2] as Label).text = "Combo"
+	else:
+		if not ok:
+			r = player._block_cooldown / max(0.001, player._cv("block_cooldown"))
+	_set_overlay(2, combo.is_on_cooldown if combo else not ok, r)
 
 func _cd_ratio(ab: AbilityBase) -> float:
 	return ab.current_cooldown / max(0.001, ab.cooldown_time) if ab.is_on_cooldown else 0.0

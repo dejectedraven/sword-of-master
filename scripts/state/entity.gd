@@ -135,7 +135,9 @@ func _input(event: InputEvent):
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:
 			MOUSE_BUTTON_LEFT: _try_attack()
-			MOUSE_BUTTON_RIGHT: _start_blocking()
+			MOUSE_BUTTON_RIGHT:
+				if get_node_or_null("ComboAbility"): _try_combo()
+				else: _start_blocking()
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.physical_keycode:
 			KEY_SPACE:
@@ -151,12 +153,16 @@ func _try_attack():
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
 	await ab.use()
-	await get_tree().create_timer(_cv("attack_time")).timeout
-	state = State.IDLE
-	_recovering = true
-	await get_tree().create_timer(_cv("recover_time")).timeout
-	_recovering = false
-	play_anim("idle")
+	state = State.IDLE; play_anim("idle")
+
+func _try_combo():
+	if state in [State.ATTACK, State.BLOCK]: return
+	var ab = get_node_or_null("ComboAbility") as AbilityBase
+	if not ab or ab.is_on_cooldown: return
+	_face_mouse(); state = State.ATTACK
+	play_attack_anim(_aim_dir())
+	await ab.use()
+	state = State.IDLE; play_anim("idle")
 
 func _try_charge():
 	if state in [State.ATTACK, State.BLOCK]: return

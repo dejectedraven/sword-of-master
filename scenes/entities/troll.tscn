@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dxx_troll_v2"]
+[gd_scene load_steps=16 format=3 uid="uid://dxx_troll_v2"]
 
 [ext_resource type="Script" path="res://scripts/state/entity.gd" id="1_entity"]
 [ext_resource type="Script" path="res://scripts/components/health_component.gd" id="2_health"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://scripts/components/rush_ability.gd" id="8_rush"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/troll/Troll_Dead.png" id="9_dead"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/troll/Troll_Recovery.png" id="10_rec"]
+[ext_resource type="Script" path="res://scripts/components/combo_ability.gd" id="11_combo"]
 
 [sub_resource type="RectangleShape2D" id="shape_troll"]
 size = Vector2(64, 64)
@@ -45,8 +46,11 @@ max_hp = 250.0
 
 [node name="SlashAbility" type="Node" parent="."]
 script = ExtResource("3_slash")
-cooldown_time = 1.0
-hit_count = 3
+cooldown_time = 0.5
+hit_count = 1
 
 [node name="RushAbility" type="Node" parent="."]
 script = ExtResource("8_rush")
+
+[node name="ComboAbility" type="Node" parent="."]
+script = ExtResource("11_combo")

@@ -73,8 +73,15 @@ var troll_block_cooldown: float = 3.0    # 盾碎后冷却 (秒)
 var troll_block_reduction: float = 0.8   # 减伤比例
 var troll_block_speed: float = 0.4       # 格挡时移速倍率
 
-var troll_attack_time: float = 0.8       # 攻击动画时长 (秒)
+var troll_attack_time: float = 0.35      # 攻击动画时长 (秒)
 var troll_recover_time: float = 1.8      # 攻击后摇 (秒)
+
+# ═══════════ 巨魔 - 三连击 (Combo) ═══════════
+
+var troll_combo_cooldown: float = 3.0    # 三连击冷却 (秒)
+var troll_combo_duration: float = 0.6    # 三连击总时长 (秒)
+var troll_combo_range: float = 64.0      # 判定框长度 (px)
+var troll_combo_damage: float = 12.0     # 每击伤害
 
 # ═══════════ AI - 战士 ═══════════
 

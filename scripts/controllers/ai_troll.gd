@@ -29,7 +29,11 @@ func _physics_process(delta: float):
 			_skill_timer = 0.0
 			return
 	if dist < GameConfig.troll_ai_attack_range:
-		await _slash()
+		var c = entity.get_node_or_null("ComboAbility") as AbilityBase
+		if c and not c.is_on_cooldown:
+			await _use_combo()
+		else:
+			await _slash()
 		return
 	entity.move_direction = (target.global_position - entity.global_position).normalized()
 
@@ -57,11 +61,19 @@ func _slash():
 	var ab = entity.get_node_or_null("SlashAbility") as AbilityBase
 	if ab: await ab.use()
 	_shake_cam()
-	await get_tree().create_timer(entity._cv("attack_time")).timeout
 	entity.state = Entity.State.IDLE
-	entity._recovering = true
-	await get_tree().create_timer(GameConfig.troll_ai_recover).timeout
-	entity._recovering = false
+	entity.play_anim("idle")
+	_attacking = false
+
+func _use_combo():
+	_attacking = true
+	var dir = (target.global_position - entity.global_position).normalized()
+	entity.facing_direction = dir
+	entity.state = Entity.State.ATTACK
+	entity.play_attack_anim(dir)
+	var ab = entity.get_node_or_null("ComboAbility") as AbilityBase
+	if ab: await ab.use()
+	entity.state = Entity.State.IDLE
 	entity.play_anim("idle")
 	_attacking = false
 
