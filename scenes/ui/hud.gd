@@ -52,7 +52,7 @@ func _make_bar(ent: Entity, y_pos: float, col: Color) -> Dictionary:
 	label.size = Vector2(280, 22); label.position = Vector2(10, 0)
 	bg.add_child(label)
 	add_child(bg)
-	var dname = ent.name if ent.name.begins_with("Warrior") or ent.name.begins_with("Archer") or ent.name.begins_with("Troll") else ent.get_class()
+	var dname = str(ent.name)
 	label.text = dname
 	return {"fill": fill, "label": label, "entity": ent, "bg": bg, "name_str": dname}
 

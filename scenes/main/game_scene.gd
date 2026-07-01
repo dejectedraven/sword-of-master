@@ -26,8 +26,10 @@ func _setup_hero_mode():
 	_heroes_alive = 1
 	var pool = ["Warrior", "Archer"]
 	pool.erase(GameState.selected_character)
+	var ally_name = ""
 	if pool.size() > 0:
-		var ally = _spawn(pool[randi() % pool.size()], Vector2(500, 360), true)
+		ally_name = pool[randi() % pool.size()]
+		var ally = _spawn(ally_name, Vector2(500, 360), true)
 		ally.health.died.connect(_on_hero_died)
 		ai_allies = [ally]
 		_heroes_alive += 1
@@ -40,13 +42,15 @@ func _setup_boss_mode():
 	troll_entity.get_node("Camera2D").make_current()
 	troll_entity.health.died.connect(_on_troll_died)
 	var pool = ["Warrior", "Archer"]
+	ai_enemies = []
 	for i in 2:
-		var e = _spawn(pool[randi() % pool.size()], Vector2(300 + i * 200, 360), true)
+		var hero_type = pool[randi() % pool.size()]
+		var e = _spawn(hero_type, Vector2(300 + i * 200, 360), true)
 		e.health.died.connect(_on_hero_died)
 		ai_enemies.append(e)
 		_heroes_alive += 1
 	hero_entity = ai_enemies[0] if ai_enemies.size() > 0 else null
-	$HUD.setup(troll_entity, null, ai_enemies)
+	$HUD.setup(troll_entity, null, [], ai_enemies)
 
 func _spawn(id: String, pos: Vector2, is_ai: bool) -> Entity:
 	var e = load("res://scenes/entities/" + id.to_lower() + ".tscn").instantiate()
