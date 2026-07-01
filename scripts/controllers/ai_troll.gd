@@ -73,7 +73,12 @@ func _use_combo():
 	entity.play_attack_anim(dir)
 	var ab = entity.get_node_or_null("ComboAbility") as AbilityBase
 	if ab: await ab.use()
+	_shake_cam()
+	await get_tree().create_timer(entity._cv("attack_time")).timeout
 	entity.state = Entity.State.IDLE
+	entity._recovering = true
+	await get_tree().create_timer(entity._cv("recover_time")).timeout
+	entity._recovering = false
 	entity.play_anim("idle")
 	_attacking = false
 

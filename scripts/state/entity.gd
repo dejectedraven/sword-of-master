@@ -163,7 +163,12 @@ func _try_combo():
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
 	await ab.use()
-	state = State.IDLE; play_anim("idle")
+	await get_tree().create_timer(_cv("attack_time")).timeout
+	state = State.IDLE
+	_recovering = true
+	await get_tree().create_timer(_cv("recover_time")).timeout
+	_recovering = false
+	play_anim("idle")
 
 func _try_charge():
 	if state in [State.ATTACK, State.BLOCK]: return
