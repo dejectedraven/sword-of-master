@@ -102,13 +102,11 @@ func _update_hp():
 	if not _player_entity or not is_instance_valid(_player_entity): return
 	player_fill.size.x = 200 * _player_entity.health.hp_ratio()
 	player_label.text = _player_entity.name + " (YOU)"
-	if _extra_bars.size() > 0:
-		for b in _extra_bars:
-			var e = b.entity
-			if is_instance_valid(e) and e.health:
-				b.fill.size.x = 280 * e.health.hp_ratio()
-				# label text stays as cached name_str
-	elif _boss_entity and is_instance_valid(_boss_entity) and _boss_entity.health:
+	for b in _extra_bars:
+		var e = b.entity
+		if is_instance_valid(e) and e.health:
+			b.fill.size.x = 280 * e.health.hp_ratio()
+	if _boss_entity and is_instance_valid(_boss_entity) and _boss_entity.health:
 		boss_fill.size.x = 300 * _boss_entity.health.hp_ratio()
 		boss_label.text = _boss_entity.name
 
