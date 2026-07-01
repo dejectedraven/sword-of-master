@@ -1,7 +1,7 @@
 extends Node
 
 enum VictoryType { NONE, HERO_WIN, TROLL_WIN }
-enum Faction { HERO, BOSS, SPECTATE }
+enum Faction { HERO, BOSS }
 
 var selected_faction: Faction = Faction.HERO
 var selected_character: String = "Warrior"
