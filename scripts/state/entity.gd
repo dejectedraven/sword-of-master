@@ -153,6 +153,7 @@ func _try_attack():
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
 	await ab.use()
+	await get_tree().create_timer(_cv("attack_time")).timeout
 	state = State.IDLE; play_anim("idle")
 
 func _try_combo():

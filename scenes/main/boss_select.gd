@@ -6,7 +6,7 @@ func _ready():
 	{
 	"id": "Troll",
 	"name": "巨魔",
-	"desc": "毁灭型魔王\n高血量，狂暴冲锋\n技能：横斩 + 狂暴冲锋 + 格挡",
+	"desc": "毁灭型魔王\n高血量，狂暴冲锋\n技能：单次攻击 + 三连击(RMB) + 狂暴冲锋(SPC)",
 	"texture": tex,
 	"hframes": 12,
 	"idle_start": 0,
