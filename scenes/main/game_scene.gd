@@ -11,7 +11,7 @@ func _ready():
 
 func _instantiate_characters():
 	var is_boss = GameState.selected_faction == GameState.Faction.BOSS
-	var hero_id = GameState.selected_character if not is_boss else "Warrior"
+	var hero_id = GameState.selected_character if not is_boss else GameState.last_selected_hero
 	var hero_scene = load("res://scenes/entities/" + hero_id.to_lower() + ".tscn")
 	hero_entity = hero_scene.instantiate()
 	hero_entity.name = hero_id

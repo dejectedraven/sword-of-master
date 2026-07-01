@@ -45,4 +45,5 @@ func _ready():
 
 func _start_game(char: String):
 	GameState.selected_character = char
+	GameState.last_selected_hero = char
 	get_tree().change_scene_to_file("res://scenes/main/game_scene.tscn")

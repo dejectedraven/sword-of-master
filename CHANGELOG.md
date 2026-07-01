@@ -14,6 +14,7 @@
 ### 🔧 修复
 - 箭矢子弹改为全部在 arrow_ability.gd 内联生成（放弃独立 .tscn 因节点 `_process` 不触发）
 - DodgeAbility 撞墙预防（raycast 检测墙壁）
+- Boss 模式敌人英雄固定为上次选的英雄（`last_selected_hero`），不再硬编码为 Warrior
 
 ## [0.2.0] — 2026-06-29
 
