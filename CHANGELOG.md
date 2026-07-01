@@ -17,6 +17,8 @@
 - DodgeAbility 撞墙预防（raycast 检测墙壁）
 - Boss 模式敌人英雄固定为上次选的英雄（`last_selected_hero`），不再硬编码为 Warrior
 - `GameState.reset()` 不再清空 `last_selected_hero`，跨局保留
+- 巨魔 AI 脚本漏挂修复（`_load_ai()` 缺少 Troll 条目导致用错 AI）
+- Boss 模式血条改为独立分条显示每个 AI 英雄 HP
 
 ## [0.2.0] — 2026-06-29
 

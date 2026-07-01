@@ -11,12 +11,38 @@ var _skill_labels: Array = []
 var _skill_overlays: Array = []
 var _player_entity: Entity
 var _boss_entity: Entity
-var _ai_heroes: Array = []
+var _enemy_bars: Array = []
 
 func setup(pl: Entity, boss: Entity, ai_heroes: Array = []):
 	_player_entity = pl
 	_boss_entity = boss
-	_ai_heroes = ai_heroes
+	for b in _enemy_bars:
+		if is_instance_valid(b.bg): b.bg.queue_free()
+	_enemy_bars = []
+	if ai_heroes.size() > 0:
+		$"BossHP".hide()
+		for i in range(ai_heroes.size()):
+			_enemy_bars.append(_make_enemy_bar(ai_heroes[i], i))
+	else:
+		$"BossHP".show()
+
+func _make_enemy_bar(ent: Entity, idx: int) -> Dictionary:
+	var bg = ColorRect.new()
+	bg.color = Color(0, 0, 0, 0.6)
+	bg.size = Vector2(300, 22)
+	bg.position = Vector2(20, 50 + idx * 28)
+	var fill = ColorRect.new()
+	fill.color = Color(0.8, 0.2, 0.2, 1)
+	fill.position = Vector2(10, 0)
+	bg.add_child(fill)
+	var label = Label.new()
+	label.horizontal_alignment = 1; label.vertical_alignment = 1
+	label.add_theme_color_override("font_color", Color.WHITE)
+	label.add_theme_font_size_override("font_size", 13)
+	label.size = Vector2(280, 22); label.position = Vector2(10, 0)
+	bg.add_child(label)
+	add_child(bg)
+	return {"fill": fill, "label": label, "entity": ent, "bg": bg}
 
 func _ready():
 	result_label.hide()
@@ -62,16 +88,16 @@ func _process(_d: float):
 
 func _update_hp():
 	if not _player_entity: return
-	var is_boss = GameState.selected_faction == GameState.Faction.BOSS
 	player_fill.size.x = 200 * _player_entity.health.hp_ratio()
 	player_label.text = _player_entity.name + " (YOU)"
-	if is_boss and _ai_heroes.size() > 0:
-		var total_hp = 0.0; var total_max = 0.0
-		for e in _ai_heroes:
+	if _enemy_bars.size() > 0:
+		for b in _enemy_bars:
+			var e = b.entity
 			if is_instance_valid(e) and e.health:
-				total_hp += e.health.current_hp; total_max += e.health.max_hp
-		boss_fill.size.x = 300 * (total_hp / max(1.0, total_max))
-		boss_label.text = "Heroes"
+				b.fill.size.x = 280 * e.health.hp_ratio()
+				b.label.text = e.name
+				if e.health.is_dead:
+					b.label.add_theme_color_override("font_color", Color(0.5, 0.5, 0.5, 1))
 	elif _boss_entity and is_instance_valid(_boss_entity):
 		boss_fill.size.x = 300 * _boss_entity.health.hp_ratio()
 		boss_label.text = _boss_entity.name

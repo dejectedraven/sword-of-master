@@ -60,7 +60,7 @@ func _spawn(id: String, pos: Vector2, is_ai: bool) -> Entity:
 	return e
 
 func _load_ai(name: String) -> Node:
-	var m = {"Warrior": "res://scripts/controllers/ai_warrior.gd", "Archer": "res://scripts/controllers/ai_archer.gd"}
+	var m = {"Warrior": "res://scripts/controllers/ai_warrior.gd", "Archer": "res://scripts/controllers/ai_archer.gd", "Troll": "res://scripts/controllers/ai_troll.gd"}
 	return load(m.get(name, "res://scripts/controllers/ai_warrior.gd")).new()
 
 func _on_hero_died():
