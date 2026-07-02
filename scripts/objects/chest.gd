@@ -60,8 +60,10 @@ func _reward():
 	p.one_shot = true; p.explosiveness = 1.0
 	p.amount = 20; p.lifetime = 0.8
 	p.direction = Vector2(0, -1); p.spread = 180.0
-	p.initial_velocity = 80.0; p.initial_velocity_random = 0.5
-	p.scale_amount = 2.0; p.scale_amount_random = 0.5
-	p.color = Color(1, 0.85, 0.3)
+	p.initial_velocity_min = 40.0; p.initial_velocity_max = 120.0
+	p.scale_amount_min = 1.0; p.scale_amount_max = 3.0
+	var grad = Gradient.new()
+	grad.colors = PackedColorArray([Color(1, 0.85, 0.3), Color(1, 0.6, 0.1)])
+	p.color_initial_ramp = grad
 	p.gravity = Vector2(0, 200)
 	add_child(p); p.emitting = true
