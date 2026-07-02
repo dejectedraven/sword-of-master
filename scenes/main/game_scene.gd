@@ -11,6 +11,7 @@ func _ready():
 	_add_floor()
 	_add_walls()
 	_instantiate_characters()
+	_spawn_chests()
 
 func _instantiate_characters():
 	var is_boss = GameState.selected_faction == GameState.Faction.BOSS
@@ -66,6 +67,22 @@ func _spawn(id: String, pos: Vector2, is_ai: bool) -> Entity:
 func _load_ai(name: String) -> Node:
 	var m = {"Warrior": "res://scripts/controllers/ai_warrior.gd", "Archer": "res://scripts/controllers/ai_archer.gd", "Troll": "res://scripts/controllers/ai_troll.gd"}
 	return load(m.get(name, "res://scripts/controllers/ai_warrior.gd")).new()
+
+func _spawn_chests():
+	var cfg = GameConfig
+	var count = cfg.chest_count
+	var margin = 64.0
+	var spots = [
+		Vector2(200, 200), Vector2(400, 150), Vector2(600, 200),
+		Vector2(1000, 200), Vector2(1100, 400), Vector2(1000, 600),
+		Vector2(200, 500), Vector2(400, 600), Vector2(600, 550),
+		Vector2(800, 350),
+	]
+	spots.shuffle()
+	for i in range(min(count, spots.size())):
+		var c = load("res://scenes/objects/chest.tscn").instantiate()
+		c.position = spots[i]
+		add_child(c)
 
 func _on_hero_died():
 	_heroes_alive -= 1

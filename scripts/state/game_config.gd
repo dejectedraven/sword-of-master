@@ -105,6 +105,15 @@ var archer_ai_retreat_out: float = 500.0       # 退到此距离才回头 (px)
 var archer_ai_skill_range: float = 200.0       # 翻滚触发距离 (px)
 var archer_ai_skill_cd: float = 5.0            # 技能间隔 (秒)
 
+# ═══════════ 宝箱 (Chest) ═══════════
+
+var chest_speed: float = 120.0       # 指针对位初始速度 px/s
+var chest_zone_size: float = 30.0    # 成功判定偏移量 (±px)
+var chest_heal_ratio: float = 0.3    # 治疗比例 (最大HP)
+var chest_speed_ramp: float = 20.0   # 每回合加速 px/s
+var chest_max_speed: float = 300.0   # 最高速度 px/s
+var chest_count: int = 2             # 每局生成数量
+
 # ═══════════ AI - 巨魔 ═══════════
 
 var troll_ai_attack_range: float = 80.0       # 平砍触发距离 (px)
