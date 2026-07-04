@@ -11,6 +11,8 @@ func use() -> bool:
 	var damage = GameConfig.archer_attack
 	var range = GameConfig.archer_arrow_range
 
+	# ⚠ 箭矢用 Tween 移动 + 内联 Node2D，不用独立 .tscn
+	#   之前独立 scene 的 _process 在加入树后不触发，已废弃
 	var arrow = Node2D.new()
 	arrow.global_position = owner_entity.global_position + dir * 32
 	arrow.rotation = dir.angle()
@@ -37,6 +39,7 @@ func _raycast_loop(arrow: Node2D, dir: Vector2, damage: float, dur: float):
 		if not is_instance_valid(arrow): return
 		elapsed += get_physics_process_delta_time()
 		var space = arrow.get_world_2d().direct_space_state
+		# collision_mask=3 检测 entities(layer1) + walls(layer2)
 		var query = PhysicsRayQueryParameters2D.create(arrow.global_position, arrow.global_position + dir * 32, 3)
 		query.exclude = [owner_entity]
 		var result = space.intersect_ray(query)

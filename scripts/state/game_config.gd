@@ -2,6 +2,11 @@ extends Node
 # ============================================================
 #   Sword of Master — 数值中心
 #   所有角色/技能/AI参数在这里调，改一个文件立刻生效
+# ════════════════════════════════════════════════════════════
+# 命名规则：<前缀>_<参数名>，前缀 = warrior / archer / troll
+# entity.gd 的 _cv("<参数名>") 按 name 拼前缀自动查值
+# 例：entity.name="Warrior" → _cv("speed") → GameConfig.warrior_speed
+# 新增角色须在此文件加同名前缀的整套变量
 # ============================================================
 
 # ═══════════ 英雄 - 战士 (Warrior) ═══════════
@@ -26,6 +31,9 @@ var warrior_block_speed: float = 0.4     # 格挡时移速倍率
 
 var warrior_attack_time: float = 0.6     # 攻击动画时长 (秒)
 var warrior_recover_time: float = 0.3    # 攻击后摇 (秒)
+# ⚠ _cv("chest_speed") 查找规则：entity.gd 按 name 前缀拼键名
+#   Warrior→warrior_chest_speed, Archer→archer_chest_speed, Troll→troll_chest_speed
+#   新增角色须加 <前缀>_chest_speed 变量，否则 _cv 返回 0.0 导致指针冻结
 var warrior_chest_speed: float = 120.0   # 开箱指针对位速度 px/s
 
 # ═══════════ 英雄 - 弓箭手 (Archer) ═══════════
@@ -116,6 +124,11 @@ var chest_heal_ratio: float = 0.3    # 治疗比例 (最大HP)
 var chest_speed_ramp: float = 20.0   # 每回合加速 px/s
 var chest_max_speed: float = 300.0   # 最高速度 px/s
 var chest_count: int = 2             # 每局生成数量
+
+# ═══════════ Props.png 瓦片尺寸（备忘） ═══════════
+# assets/sprites/enemies/Props.png = 576×64
+# 每格 16×16，共 36列×4行，不是 32×32！
+# 第 12-15 列为冰/水晶物块，不是宝箱（之前误提取过）
 
 # ═══════════ AI - 巨魔 ═══════════
 

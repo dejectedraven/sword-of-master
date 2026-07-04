@@ -31,11 +31,15 @@ var _invincible: bool = false
 var _exhausted: bool = false
 
 @onready var sprite: Sprite2D = $Sprite2D
+# ⚠ 仅 Warrior 使用 AnimationTree（4 方向 BlendSpace2D）；Troll/Archer 用 Simple Anim（直接换 texture）
 @onready var anim_tree: AnimationTree = $AnimationTree if has_node("AnimationTree") else null
 @onready var health: HealthComponent = $HealthComponent
 
 signal died()
 
+# ⚠ 通用参数查询：GameConfig 找 [前缀_key]，新英雄须在 GameConfig 建同名前缀变量
+# prefix 由 name 推断：含"Archer"→archer, 含"Warrior"→warrior, 其余→troll
+# 例：Warrior 查 _cv("speed") → GameConfig.warrior_speed
 func _cv(key: String):
 	var prefix = "archer" if "Archer" in name else ("warrior" if "Warrior" in name else "troll")
 	var v = GameConfig.get(prefix + "_" + key)
@@ -54,6 +58,7 @@ func _ready():
 	)
 	if idle_texture: sprite.texture = idle_texture; sprite.hframes = idle_frames
 
+# ⚠ 必须每个 _try_*() 的 await 后加 if health.is_dead: return，否则 coroutine 会重置 state 覆盖 DEAD
 func _physics_process(_d: float):
 	if state == State.DEAD: return
 	_read_input(); _apply_movement(); _update_anim_state()
@@ -130,6 +135,10 @@ func _update_flip():
 	if move_direction.x < -0.01: sprite.flip_h = true
 	elif move_direction.x > 0.01: sprite.flip_h = false
 
+# ⚠ 按键路由顺序：
+#   LMB → ArrowAbility→SlashAbility（远程优先）
+#   RMB → 有 ComboAbility 则三连击，否则格挡
+#   SPC → ChargeAbility→DodgeAbility→RushAbility（按节点存在顺序检测）
 func _input(event: InputEvent):
 	if state == State.DEAD or is_ai_controlled or _recovering: return
 	if event is InputEventMouseButton and event.pressed:

@@ -3,6 +3,8 @@ extends CanvasLayer
 var chest_ref: Node = null
 var _pointer_pos: float = 0.0
 var _pointer_dir: float = 1.0
+# ⚠ speed 由 chest.gd 在 _start_minigame 时通过 _cv("chest_speed") 覆盖
+#   默认 120.0，角色各自不同（warrior=120, archer=160, troll=80但troll不可开箱）
 var speed: float = 120.0
 var _loop_count: int = 0
 var _done: bool = false

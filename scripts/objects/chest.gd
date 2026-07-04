@@ -20,6 +20,7 @@ func _input(event):
 		_start_minigame()
 
 func _on_entered(body):
+	# Boss（name 含"Troll"）不可开箱
 	if body is CharacterBody2D and "Troll" not in body.name:
 		_player_nearby = true
 		_player_entity = body
@@ -58,6 +59,8 @@ func _reward():
 		var hp = _player_entity.get("health")
 		if hp:
 			hp.current_hp = min(hp.current_hp + hp.max_hp * 0.3, hp.max_hp)
+	# Godot 4.6 CPUParticles2D：initial_velocity→initial_velocity_min/max
+	# scale_amount→scale_amount_min/max；color→color_initial_ramp（Gradient）
 	var p = CPUParticles2D.new()
 	p.one_shot = true; p.explosiveness = 1.0
 	p.amount = 20; p.lifetime = 0.8
