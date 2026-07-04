@@ -21,7 +21,6 @@ var _hint: Label
 var _result: Label
 
 func _ready():
-	process_mode = PROCESS_MODE_WHEN_PAUSED
 	var vs = get_viewport().get_visible_rect().size
 	_bg = ColorRect.new()
 	_bg.color = Color(0, 0, 0, 0.6)

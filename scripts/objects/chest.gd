@@ -34,7 +34,6 @@ func _on_exited(body):
 
 func _start_minigame():
 	_state = ChestState.MINIGAME
-	get_tree().paused = true
 	var mg = preload("res://scripts/ui/chest_minigame.gd").new()
 	mg.chest_ref = self
 	if _player_entity and _player_entity.has_method("_cv"):
@@ -42,7 +41,6 @@ func _start_minigame():
 	get_tree().current_scene.add_child(mg)
 
 func on_minigame_done(success: bool):
-	get_tree().paused = false
 	_state = ChestState.OPENING
 	sprite.frame = 1
 	await get_tree().create_timer(0.25).timeout
