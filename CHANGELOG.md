@@ -1,5 +1,20 @@
 # 更新日志
 
+## [0.4.0] — 2026-07-04
+
+### ✨ 新增
+- **宝箱交互系统**：场景随机生成宝箱，按 F 启动节奏对位小游戏，指针摆动时按 F 停在绿色区域即可成功
+- **开箱奖励**：成功回血 30% 最大 HP，失败则空箱；宝箱状态机 CLOSED→MINIGAME→OPENING→OPENED
+- **节奏对位小游戏**：CanvasLayer 覆盖层，指针 90px 范围内摆动，6 回合后每 2 回合加速，0.8s 结果展示
+- **Bonsaiheldin 宝箱素材**：CC-BY 4.0，32×32 四帧动画（关闭→开启暗箱→有宝→空箱）
+- **每角色开箱速度**：GameConfig 新增 `warrior_chest_speed=120` / `archer_chest_speed=160` / `troll_chest_speed=80`（Boss 不可开箱）
+- **小游戏参数统一调参**：`chest_speed` / `chest_speed_ramp` / `chest_max_speed` / `chest_zone_size` / `chest_count` / `chest_heal_ratio` 全部接入 GameConfig
+
+### 🔧 修复
+- 死亡后角色仍可行动：`entity.gd` 攻击 coroutine 每个 `await` 后加 `if health.is_dead: return`
+- AI 单位死亡动画不播放：`ai_troll/archer/warrior.gd` 每个 `await` 后加 `if entity.health.is_dead: _attacking = false; return`
+- 修复 `chest.png` 错误截取自 Props.png（实为冰/水晶块，非宝箱）
+
 ## [0.3.0] — 2026-06-30
 
 ### ✨ 新增
