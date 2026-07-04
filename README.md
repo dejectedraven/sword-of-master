@@ -38,6 +38,7 @@
 - Troll_Idle/Walk/Attack/Dead/Recovery/Windup：Tiny Swords Enemy Pack
 - UI 按钮/面板：Tiny Swords Main Pack
 - 字体：PirataOne
+- 宝箱精灵：Bonsaiheldin — Treasure chests 32x32 (CC-BY 4.0) — https://opengameart.org/content/treasure-chests-32x32
 
 ## 更新日志
 

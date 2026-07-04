@@ -3,7 +3,7 @@ extends CanvasLayer
 var chest_ref: Node = null
 var _pointer_pos: float = 0.0
 var _pointer_dir: float = 1.0
-var _speed: float = 120.0
+var speed: float = 120.0
 var _loop_count: int = 0
 var _done: bool = false
 var _success: bool = false
@@ -73,13 +73,13 @@ func _ready():
 
 func _process(delta):
 	if not _done:
-		_pointer_pos += _pointer_dir * _speed * delta
+		_pointer_pos += _pointer_dir * speed * delta
 		if _pointer_pos > 90:
 			_pointer_pos = 90; _pointer_dir = -1; _loop_count += 1
 		elif _pointer_pos < -90:
 			_pointer_pos = -90; _pointer_dir = 1; _loop_count += 1
 		if _loop_count > 6 and _loop_count % 2 == 0:
-			_speed = min(_speed + 20, 300)
+			speed = min(speed + GameConfig.chest_speed_ramp, GameConfig.chest_max_speed)
 		_arrow.position.y = get_viewport().get_visible_rect().size.y / 2 + _pointer_pos
 		return
 	_close_timer -= delta
@@ -92,7 +92,7 @@ func _input(event):
 	if _done: return
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F:
 		_done = true
-		_success = abs(_pointer_pos) < 30
+		_success = abs(_pointer_pos) < GameConfig.chest_zone_size
 		_result.text = "获得财宝!" if _success else "空的..."
 		_result.add_theme_color_override("font_color", Color(1, 0.85, 0.3) if _success else Color(0.6, 0.6, 0.6))
 		_result.show()

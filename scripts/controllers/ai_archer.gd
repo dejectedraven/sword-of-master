@@ -54,10 +54,13 @@ func _shoot():
 	if not target or target.health.is_dead: _attacking = false; return
 	var ab = entity.get_node_or_null("ArrowAbility") as AbilityBase
 	if ab: await ab.use()
+	if entity.health.is_dead: _attacking = false; return
 	await get_tree().create_timer(entity._cv("attack_time")).timeout
+	if entity.health.is_dead: _attacking = false; return
 	entity.state = Entity.State.IDLE
 	entity._recovering = true
 	await get_tree().create_timer(GameConfig.archer_ai_recover).timeout
+	if entity.health.is_dead: _attacking = false; return
 	entity._recovering = false
 	entity.play_anim("idle")
 	_attacking = false
@@ -70,10 +73,13 @@ func _use_dodge():
 	entity.play_attack_anim(dir)
 	var ab = entity.get_node_or_null("DodgeAbility") as AbilityBase
 	if ab: await ab.use()
+	if entity.health.is_dead: _attacking = false; return
 	await get_tree().create_timer(entity._cv("attack_time")).timeout
+	if entity.health.is_dead: _attacking = false; return
 	entity.state = Entity.State.IDLE
 	entity._recovering = true
 	await get_tree().create_timer(GameConfig.archer_ai_recover).timeout
+	if entity.health.is_dead: _attacking = false; return
 	entity._recovering = false
 	entity.play_anim("idle")
 	_attacking = false

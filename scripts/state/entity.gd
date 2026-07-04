@@ -153,7 +153,9 @@ func _try_attack():
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
 	await ab.use()
+	if health.is_dead: return
 	await get_tree().create_timer(_cv("attack_time")).timeout
+	if health.is_dead: return
 	state = State.IDLE; play_anim("idle")
 
 func _try_combo():
@@ -163,10 +165,13 @@ func _try_combo():
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
 	await ab.use()
+	if health.is_dead: return
 	await get_tree().create_timer(_cv("attack_time")).timeout
+	if health.is_dead: return
 	state = State.IDLE
 	_recovering = true
 	await get_tree().create_timer(_cv("recover_time")).timeout
+	if health.is_dead: return
 	_recovering = false
 	play_anim("idle")
 
@@ -177,10 +182,13 @@ func _try_charge():
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
 	await ab.use()
+	if health.is_dead: return
 	await get_tree().create_timer(_cv("attack_time")).timeout
+	if health.is_dead: return
 	state = State.IDLE
 	_recovering = true
 	await get_tree().create_timer(_cv("recover_time")).timeout
+	if health.is_dead: return
 	_recovering = false
 	play_anim("idle")
 
@@ -191,6 +199,7 @@ func _try_rush():
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
 	await ab.use()
+	if health.is_dead: return
 	state = State.IDLE; play_anim("idle")
 
 func _try_dodge():
@@ -200,6 +209,7 @@ func _try_dodge():
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
 	await ab.use()
+	if health.is_dead: return
 	state = State.IDLE; play_anim("idle")
 
 func _restore_color():

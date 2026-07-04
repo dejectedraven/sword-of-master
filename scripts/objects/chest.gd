@@ -36,6 +36,8 @@ func _start_minigame():
 	get_tree().paused = true
 	var mg = preload("res://scripts/ui/chest_minigame.gd").new()
 	mg.chest_ref = self
+	if _player_entity and _player_entity.has_method("_cv"):
+		mg.speed = _player_entity._cv("chest_speed")
 	get_tree().current_scene.add_child(mg)
 
 func on_minigame_done(success: bool):

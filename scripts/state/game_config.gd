@@ -26,6 +26,7 @@ var warrior_block_speed: float = 0.4     # 格挡时移速倍率
 
 var warrior_attack_time: float = 0.6     # 攻击动画时长 (秒)
 var warrior_recover_time: float = 0.3    # 攻击后摇 (秒)
+var warrior_chest_speed: float = 120.0   # 开箱指针对位速度 px/s
 
 # ═══════════ 英雄 - 弓箭手 (Archer) ═══════════
 
@@ -47,6 +48,7 @@ var archer_block_speed: float = 0.4      # 格挡时移速倍率
 
 var archer_attack_time: float = 0.4      # 射击动画时长 (秒)
 var archer_recover_time: float = 0.2     # 射击后摇 (秒)
+var archer_chest_speed: float = 160.0    # 开箱指针对位速度 px/s
 
 # ═══════════ Boss - 巨魔 (Troll) ═══════════
 
@@ -75,6 +77,7 @@ var troll_block_speed: float = 0.4       # 格挡时移速倍率
 
 var troll_attack_time: float = 0.35      # 攻击动画时长 (秒)
 var troll_recover_time: float = 1.8      # 攻击后摇 (秒)
+var troll_chest_speed: float = 80.0      # 开箱指针对位速度 px/s
 
 # ═══════════ 巨魔 - 三连击 (Combo) ═══════════
 

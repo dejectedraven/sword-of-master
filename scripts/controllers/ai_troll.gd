@@ -60,6 +60,7 @@ func _slash():
 	entity.play_attack_anim(dir)
 	var ab = entity.get_node_or_null("SlashAbility") as AbilityBase
 	if ab: await ab.use()
+	if entity.health.is_dead: _attacking = false; return
 	_shake_cam()
 	entity.state = Entity.State.IDLE
 	entity.play_anim("idle")
@@ -73,11 +74,14 @@ func _use_combo():
 	entity.play_attack_anim(dir)
 	var ab = entity.get_node_or_null("ComboAbility") as AbilityBase
 	if ab: await ab.use()
+	if entity.health.is_dead: _attacking = false; return
 	_shake_cam()
 	await get_tree().create_timer(entity._cv("attack_time")).timeout
+	if entity.health.is_dead: _attacking = false; return
 	entity.state = Entity.State.IDLE
 	entity._recovering = true
 	await get_tree().create_timer(entity._cv("recover_time")).timeout
+	if entity.health.is_dead: _attacking = false; return
 	entity._recovering = false
 	entity.play_anim("idle")
 	_attacking = false
@@ -90,6 +94,7 @@ func _use_rush():
 	entity.play_attack_anim(dir)
 	var ab = entity.get_node_or_null("RushAbility") as AbilityBase
 	if ab: await ab.use()
+	if entity.health.is_dead: _attacking = false; return
 	entity.state = Entity.State.IDLE
 	entity.play_anim("idle")
 	await get_tree().create_timer(0.3).timeout
