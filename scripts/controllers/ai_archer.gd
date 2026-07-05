@@ -81,9 +81,7 @@ func _use_charge_shot():
 		ab.start_charge()
 		await get_tree().create_timer(GameConfig.archer_charge_max_time).timeout
 		if entity.health.is_dead: _attacking = false; return
-		var data = ab.release_charge()
-		if data.size() > 0:
-			ab.fire_arrow(data.dir, data.damage, data.speed, data.range)
+		ab.release_charge()
 	await get_tree().create_timer(entity._cv("attack_time")).timeout
 	if entity.health.is_dead: _attacking = false; return
 	entity.state = Entity.State.IDLE
