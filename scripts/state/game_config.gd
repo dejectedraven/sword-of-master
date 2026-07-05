@@ -47,12 +47,15 @@ var archer_arrow_cooldown: float = 0.8   # 射击冷却 (秒)
 var archer_arrow_speed: float = 600.0    # 箭矢速度 px/s
 var archer_arrow_range: float = 500.0    # 箭矢最大射程 (px)
 
-var archer_dodge_cooldown: float = 5.0   # 翻滚冷却 (秒)
-var archer_dodge_distance: float = 120.0 # 翻滚距离 (px)
+var archer_charge_cooldown: float = 3.0   # 蓄力射冷却 (秒)
+var archer_charge_max_time: float = 1.5   # 最大蓄力时长 (秒)
+var archer_charge_damage_bonus: float = 1.5 # 满蓄力额外伤害倍率 (1 + ratio * 1.5)
+var archer_charge_speed_bonus: float = 0.5  # 满蓄力箭速加成倍率
 
-var archer_block_cooldown: float = 3.0   # 盾碎后冷却 (秒)
-var archer_block_reduction: float = 0.8  # 减伤比例
-var archer_block_speed: float = 0.4      # 格挡时移速倍率
+var archer_triple_cooldown: float = 4.0   # 三连射冷却 (秒)
+var archer_triple_damage_mult: float = 0.7 # 每箭伤害倍率
+var archer_triple_spread: float = 15.0    # 散布角度 (±度)
+var archer_triple_count: int = 3          # 箭数
 
 var archer_attack_time: float = 0.4      # 射击动画时长 (秒)
 var archer_recover_time: float = 0.2     # 射击后摇 (秒)
@@ -107,14 +110,15 @@ var warrior_ai_block_chance: float = 0.25     # 逃跑时格挡概率
 
 # ═══════════ AI - 弓箭手 ═══════════
 
-var archer_ai_attack_range: float = 350.0     # 射击触发距离 (px)
-var archer_ai_preferred_range: float = 200.0  # 保持距离 (px)
-var archer_ai_windup: float = 0.4             # 攻击前摇 (秒)
-var archer_ai_recover: float = 0.6            # 攻击后摇 (秒)
-var archer_ai_retreat_hp: float = 0.3          # 低于此血量开始逃跑
-var archer_ai_retreat_out: float = 500.0       # 退到此距离才回头 (px)
-var archer_ai_skill_range: float = 200.0       # 翻滚触发距离 (px)
-var archer_ai_skill_cd: float = 5.0            # 技能间隔 (秒)
+var archer_ai_attack_range: float = 350.0      # 射击触发距离 (px)
+var archer_ai_preferred_range: float = 200.0   # 保持距离 (px)
+var archer_ai_windup: float = 0.4              # 攻击前摇 (秒)
+var archer_ai_recover: float = 0.6             # 攻击后摇 (秒)
+var archer_ai_retreat_hp: float = 0.3           # 低于此血量开始逃跑
+var archer_ai_retreat_out: float = 500.0        # 退到此距离才回头 (px)
+var archer_ai_skill_cd: float = 5.0             # 技能间隔 (秒)
+var archer_ai_charge_range: float = 250.0       # 蓄力射触发距离 (px)
+var archer_ai_triple_range: float = 150.0       # 三连射触发距离 (px)
 
 # ═══════════ 宝箱 (Chest) ═══════════
 

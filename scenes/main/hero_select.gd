@@ -20,7 +20,7 @@ func _ready():
 	{
 	"id": "Archer",
 	"name": "弓箭手",
-	"desc": "远程输出型英雄\n放风筝，精准射击\n技能：射击 + 翻滚 + 格挡",
+	"desc": "远程输出型英雄\n放风筝，精准射击\n技能：射击 + 三连射 + 蓄力射击",
 	"texture": load("res://assets/sprites/player/Archer_Idle.png"),
 	"hframes": 6,
 	"vframes": 1,
