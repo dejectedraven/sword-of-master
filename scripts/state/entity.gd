@@ -30,6 +30,8 @@ var _block_cooldown: float = 0.0
 var _invincible: bool = false
 var _exhausted: bool = false
 var _charging: bool = false
+var _charge_bg: ColorRect
+var _charge_fill: ColorRect
 
 @onready var sprite: Sprite2D = $Sprite2D
 # ⚠ 仅 Warrior 使用 AnimationTree（4 方向 BlendSpace2D）；Troll/Archer 用 Simple Anim（直接换 texture）
@@ -59,6 +61,17 @@ func _ready():
 		died.emit()
 	)
 	if idle_texture: sprite.texture = idle_texture; sprite.hframes = idle_frames
+	if get_node_or_null("ChargeShotAbility"):
+		_charge_bg = ColorRect.new()
+		_charge_bg.size = Vector2(40, 4)
+		_charge_bg.color = Color(0, 0, 0, 0.6)
+		_charge_bg.position = Vector2(-20, -40)
+		add_child(_charge_bg)
+		_charge_bg.hide()
+		_charge_fill = ColorRect.new()
+		_charge_fill.size = Vector2(0, 4)
+		_charge_fill.color = Color(1, 0.8, 0, 0.9)
+		_charge_bg.add_child(_charge_fill)
 
 # ⚠ 必须每个 _try_*() 的 await 后加 if health.is_dead: return，否则 coroutine 会重置 state 覆盖 DEAD
 func _physics_process(_d: float):
@@ -78,7 +91,14 @@ func _process(delta: float):
 			sprite.hframes = exhaust_frames
 		_frame_timer += delta
 		if _frame_timer >= 0.1: _frame_timer = 0.0; sprite.frame = (sprite.frame + 1) % sprite.hframes
-	elif not anim_tree and state == State.DEAD:
+	if _charge_fill:
+		var ab = get_node_or_null("ChargeShotAbility")
+		if ab and ab._charging:
+			_charge_bg.show()
+			_charge_fill.size.x = 40 * ab.get_charge_ratio()
+		else:
+			_charge_bg.hide()
+	if not anim_tree and state == State.DEAD:
 		_frame_timer += delta
 		if _frame_timer >= 0.15 and sprite.frame < dead_frames - 1:
 			_frame_timer = 0.0; sprite.frame = min(sprite.frame + 1, dead_frames - 1)
@@ -98,8 +118,10 @@ func _read_input():
 	if state == State.ATTACK:
 		var charge_ab = get_node_or_null("ChargeShotAbility")
 		if charge_ab and charge_ab._charging and not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
-			charge_ab.release_charge()
-			_charging = false; state = State.IDLE; play_anim("idle")
+			var data = charge_ab.release_charge()
+			if data.size() > 0:
+				_charging = false
+				_do_charge_release(data)
 		return
 	move_direction.x = int(Input.is_action_pressed("right")) - int(Input.is_action_pressed("left"))
 	move_direction.y = int(Input.is_action_pressed("down")) - int(Input.is_action_pressed("up"))
@@ -233,10 +255,20 @@ func _try_dodge():
 func _try_charge_shot():
 	if state in [State.ATTACK, State.BLOCK]: return
 	var ab = get_node_or_null("ChargeShotAbility")
-	if not ab: return
+	if not ab or ab.is_on_cooldown: return
 	_face_mouse(); state = State.ATTACK; _charging = true
-	play_attack_anim(_aim_dir())
 	ab.start_charge()
+
+func _do_charge_release(data: Dictionary):
+	state = State.ATTACK
+	play_attack_anim(data.dir)
+	await get_tree().create_timer(_cv("attack_time")).timeout
+	if health.is_dead: return
+	var ab = get_node_or_null("ChargeShotAbility")
+	if ab: ab.fire_arrow(data.dir, data.damage, data.speed, data.range)
+	await get_tree().create_timer(0.1).timeout
+	if health.is_dead: return
+	state = State.IDLE; play_anim("idle")
 
 func _try_triple_shot():
 	if state in [State.ATTACK, State.BLOCK]: return
