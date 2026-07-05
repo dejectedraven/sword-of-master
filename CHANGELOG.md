@@ -1,5 +1,18 @@
 # 更新日志
 
+## [0.5.0] — 2026-07-05
+
+### ✨ 新增
+- **Archer 技能重做**：RMB 蓄力射击（charge_shot_ability.gd，按住蓄力 0→1.5s，伤害/箭速随蓄力比增长，CD 3s）+ SPC 三连射（triple_shot_ability.gd，±15° 散布 3 箭，0.7x 伤害/箭，CD 4s）
+- **蓄力射击机制**：按住 RMB 蓄力时角色面朝鼠标方向无法移动，松开释放；满蓄力自动射出
+- **三连射机制**：瞬间射出 3 箭（0.1s 间隔），内联生成，适用于近距离爆发
+- **Archer AI 适配**：`ai_archer.gd` 重写：中距离→蓄力射、近距离→三连射、远程→普攻、低血撤退
+- **GameConfig 新参数**：`archer_charge_cooldown/max_time/damage_bonus/speed_bonus` + `archer_triple_cooldown/damage_mult/spread_deg/count` + `archer_ai_charge_range/triple_range`
+
+### 💥 移除
+- Archer 移除翻滚（DodgeAbility）和格挡（Block）
+- HUD 技能栏 "Skill" 改为 "Triple"，"Block" 改为 "Charge"（Archer 时）
+
 ## [0.4.0] — 2026-07-04
 
 ### ✨ 新增
@@ -14,6 +27,9 @@
 - 死亡后角色仍可行动：`entity.gd` 攻击 coroutine 每个 `await` 后加 `if health.is_dead: return`
 - AI 单位死亡动画不播放：`ai_troll/archer/warrior.gd` 每个 `await` 后加 `if entity.health.is_dead: _attacking = false; return`
 - 修复 `chest.png` 错误截取自 Props.png（实为冰/水晶块，非宝箱）
+
+### 💥 移除
+- Archer 移除翻滚（DodgeAbility）和格挡（Block）技能
 
 ## [0.3.0] — 2026-06-30
 

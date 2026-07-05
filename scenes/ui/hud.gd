@@ -67,7 +67,7 @@ func _create_skill_bar():
 	add_child(bar)
 	var vs = get_viewport().get_visible_rect().size
 	bar.position = Vector2(vs.x / 2 - 150, vs.y - 60)
-	for data in [["LMB", "Slash"], ["SPC", "Skill"], ["RMB", "Block"]]:
+	for data in [["LMB", "Shoot"], ["SPC", "Skill"], ["RMB", "Block"]]:
 		var inf = _make_slot(data[0], data[1])
 		bar.add_child(inf["panel"])
 		_skill_slots.append(inf["panel"])
@@ -119,25 +119,32 @@ func _update_skill_cd():
 	if slash: _set_overlay(0, slash.is_on_cooldown, _cd_ratio(slash))
 	elif arrow: _set_overlay(0, arrow.is_on_cooldown, _cd_ratio(arrow))
 	else: _set_overlay(0, false, 0.0)
+	var triple = player.get_node_or_null("TripleShotAbility") as AbilityBase
 	var charge = player.get_node_or_null("ChargeAbility") as AbilityBase
 	var rush = player.get_node_or_null("RushAbility") as AbilityBase
 	var dodge = player.get_node_or_null("DodgeAbility") as AbilityBase
-	var ab1 = charge if charge else (rush if rush else dodge)
+	var ab1 = triple if triple else (charge if charge else (rush if rush else dodge))
 	_skill_slots[1].visible = ab1 != null
 	if ab1 and _skill_labels.size() > 1:
-		(_skill_labels[1] as Label).text = "Rush" if rush else ("Dodge" if dodge else "Charge")
+		(_skill_labels[1] as Label).text = "Triple" if triple else ("Rush" if rush else ("Dodge" if dodge else "Charge"))
 	if ab1: _set_overlay(1, ab1.is_on_cooldown, _cd_ratio(ab1))
 	else: _set_overlay(1, false, 0.0)
-	var ok = player._block_ready
-	var r = 0.0
+	var charge_shot = player.get_node_or_null("ChargeShotAbility") as AbilityBase
 	var combo = player.get_node_or_null("ComboAbility") as AbilityBase
-	if combo:
-		r = combo.current_cooldown / max(0.001, combo.cooldown_time) if combo.is_on_cooldown else 0.0
+	if charge_shot:
+		_skill_slots[2].visible = true
+		if _skill_labels.size() > 2: (_skill_labels[2] as Label).text = "Charge"
+		_set_overlay(2, charge_shot.is_on_cooldown, _cd_ratio(charge_shot))
+	elif combo:
+		var r = combo.current_cooldown / max(0.001, combo.cooldown_time) if combo.is_on_cooldown else 0.0
 		if _skill_labels.size() > 2: (_skill_labels[2] as Label).text = "Combo"
+		_set_overlay(2, combo.is_on_cooldown, r)
 	else:
+		var ok = player._block_ready
+		var r = 0.0
 		if not ok:
 			r = player._block_cooldown / max(0.001, player._cv("block_cooldown"))
-	_set_overlay(2, combo.is_on_cooldown if combo else not ok, r)
+		_set_overlay(2, not ok, r)
 
 func _cd_ratio(ab: AbilityBase) -> float:
 	return ab.current_cooldown / max(0.001, ab.cooldown_time) if ab.is_on_cooldown else 0.0

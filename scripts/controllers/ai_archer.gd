@@ -20,10 +20,15 @@ func _physics_process(delta: float):
 	if _retreating:
 		if dist < GameConfig.archer_ai_retreat_out: _retreat(); return
 		else: _retreating = false
-	if dist < GameConfig.archer_ai_skill_range and _skill_timer > GameConfig.archer_ai_skill_cd:
-		var d = entity.get_node_or_null("DodgeAbility") as AbilityBase
-		if d and not d.is_on_cooldown:
-			await _use_dodge()
+	if _skill_timer > GameConfig.archer_ai_skill_cd:
+		var c = entity.get_node_or_null("ChargeShotAbility")
+		if c and not c.is_on_cooldown and dist < GameConfig.archer_ai_charge_range:
+			await _use_charge_shot()
+			_skill_timer = 0.0
+			return
+		var t = entity.get_node_or_null("TripleShotAbility")
+		if t and not t.is_on_cooldown and dist < GameConfig.archer_ai_triple_range:
+			await _use_triple_shot()
 			_skill_timer = 0.0
 			return
 	if dist < GameConfig.archer_ai_attack_range:
@@ -65,13 +70,31 @@ func _shoot():
 	entity.play_anim("idle")
 	_attacking = false
 
-func _use_dodge():
+func _use_charge_shot():
 	_attacking = true
 	var dir = (target.global_position - entity.global_position).normalized()
 	entity.facing_direction = dir
 	entity.state = Entity.State.ATTACK
 	entity.play_attack_anim(dir)
-	var ab = entity.get_node_or_null("DodgeAbility") as AbilityBase
+	var ab = entity.get_node_or_null("ChargeShotAbility")
+	if ab:
+		ab.start_charge()
+		await get_tree().create_timer(GameConfig.archer_charge_max_time).timeout
+		if entity.health.is_dead: _attacking = false; return
+		ab.release_charge()
+	await get_tree().create_timer(entity._cv("attack_time")).timeout
+	if entity.health.is_dead: _attacking = false; return
+	entity.state = Entity.State.IDLE
+	entity.play_anim("idle")
+	_attacking = false
+
+func _use_triple_shot():
+	_attacking = true
+	var dir = (target.global_position - entity.global_position).normalized()
+	entity.facing_direction = dir
+	entity.state = Entity.State.ATTACK
+	entity.play_attack_anim(dir)
+	var ab = entity.get_node_or_null("TripleShotAbility") as AbilityBase
 	if ab: await ab.use()
 	if entity.health.is_dead: _attacking = false; return
 	await get_tree().create_timer(entity._cv("attack_time")).timeout

@@ -29,6 +29,7 @@ var _block_ready: bool = true
 var _block_cooldown: float = 0.0
 var _invincible: bool = false
 var _exhausted: bool = false
+var _charging: bool = false
 
 @onready var sprite: Sprite2D = $Sprite2D
 # ⚠ 仅 Warrior 使用 AnimationTree（4 方向 BlendSpace2D）；Troll/Archer 用 Simple Anim（直接换 texture）
@@ -53,6 +54,7 @@ func _ready():
 		health.current_hp = health.max_hp
 	health.died.connect(func():
 		state = State.DEAD
+		_charging = false
 		_set_dead_anim()
 		died.emit()
 	)
@@ -93,7 +95,12 @@ func _read_input():
 	if _exhausted or _recovering:
 		move_direction = Vector2.ZERO; return
 	if state == State.BLOCK: return _read_block_input()
-	if state == State.ATTACK: return
+	if state == State.ATTACK:
+		var charge_ab = get_node_or_null("ChargeShotAbility")
+		if charge_ab and charge_ab._charging and not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
+			charge_ab.release_charge()
+			_charging = false; state = State.IDLE; play_anim("idle")
+		return
 	move_direction.x = int(Input.is_action_pressed("right")) - int(Input.is_action_pressed("left"))
 	move_direction.y = int(Input.is_action_pressed("down")) - int(Input.is_action_pressed("up"))
 	move_direction = move_direction.normalized()
@@ -137,20 +144,22 @@ func _update_flip():
 
 # ⚠ 按键路由顺序：
 #   LMB → ArrowAbility→SlashAbility（远程优先）
-#   RMB → 有 ComboAbility 则三连击，否则格挡
-#   SPC → ChargeAbility→DodgeAbility→RushAbility（按节点存在顺序检测）
+#   RMB → ChargeShotAbility→ComboAbility→_start_blocking
+#   SPC → TripleShotAbility→ChargeAbility→DodgeAbility→RushAbility
 func _input(event: InputEvent):
 	if state == State.DEAD or is_ai_controlled or _recovering: return
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:
 			MOUSE_BUTTON_LEFT: _try_attack()
 			MOUSE_BUTTON_RIGHT:
-				if get_node_or_null("ComboAbility"): _try_combo()
+				if get_node_or_null("ChargeShotAbility"): _try_charge_shot()
+				elif get_node_or_null("ComboAbility"): _try_combo()
 				else: _start_blocking()
 	if event is InputEventKey and event.pressed and not event.echo:
 		match event.physical_keycode:
 			KEY_SPACE:
-				if get_node_or_null("ChargeAbility"): _try_charge()
+				if get_node_or_null("TripleShotAbility"): _try_triple_shot()
+				elif get_node_or_null("ChargeAbility"): _try_charge()
 				elif get_node_or_null("DodgeAbility"): _try_dodge()
 				elif get_node_or_null("RushAbility"): _try_rush()
 
@@ -218,6 +227,26 @@ func _try_dodge():
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
 	await ab.use()
+	if health.is_dead: return
+	state = State.IDLE; play_anim("idle")
+
+func _try_charge_shot():
+	if state in [State.ATTACK, State.BLOCK]: return
+	var ab = get_node_or_null("ChargeShotAbility")
+	if not ab: return
+	_face_mouse(); state = State.ATTACK; _charging = true
+	play_attack_anim(_aim_dir())
+	ab.start_charge()
+
+func _try_triple_shot():
+	if state in [State.ATTACK, State.BLOCK]: return
+	var ab = get_node_or_null("TripleShotAbility") as AbilityBase
+	if not ab or ab.is_on_cooldown: return
+	_face_mouse(); state = State.ATTACK
+	play_attack_anim(_aim_dir())
+	await ab.use()
+	if health.is_dead: return
+	await get_tree().create_timer(_cv("attack_time")).timeout
 	if health.is_dead: return
 	state = State.IDLE; play_anim("idle")
 
