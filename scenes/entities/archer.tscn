@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://archer_v2"]
+[gd_scene load_steps=7 format=3 uid="uid://archer_v2"]
 
 [ext_resource type="Texture2D" path="res://assets/sprites/player/Archer_Idle.png" id="1_idle"]
 [ext_resource type="Texture2D" path="res://assets/sprites/player/Archer_Run.png" id="2_run"]
@@ -6,8 +6,7 @@
 [ext_resource type="Script" path="res://scripts/state/entity.gd" id="4_entity"]
 [ext_resource type="Script" path="res://scripts/components/health_component.gd" id="5_health"]
 [ext_resource type="Script" path="res://scripts/components/arrow_ability.gd" id="6_arrow"]
-[ext_resource type="Script" path="res://scripts/components/charge_shot_ability.gd" id="7_charge"]
-[ext_resource type="Script" path="res://scripts/components/triple_shot_ability.gd" id="8_triple"]
+[ext_resource type="Script" path="res://scripts/components/dodge_ability.gd" id="7_dodge"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_archer"]
 radius = 20.0
@@ -37,8 +36,5 @@ script = ExtResource("5_health")
 [node name="ArrowAbility" type="Node" parent="."]
 script = ExtResource("6_arrow")
 
-[node name="ChargeShotAbility" type="Node" parent="."]
-script = ExtResource("7_charge")
-
-[node name="TripleShotAbility" type="Node" parent="."]
-script = ExtResource("8_triple")
+[node name="DodgeAbility" type="Node" parent="."]
+script = ExtResource("7_dodge")
