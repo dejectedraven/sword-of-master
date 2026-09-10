@@ -27,6 +27,13 @@
 
 新增角色指南见 [docs/ADDING_CHARACTER.md](docs/ADDING_CHARACTER.md)。
 
+## 文档
+
+- [黑夜潜行系统说明](docs/GAMEPLAY_SYSTEMS.md) — 视野 / 障碍物 / 噪声 / 道具 / 参数速查
+- [AI 改进方案](docs/AI_PLAN.md) — AI 现状分析与分阶段升级计划
+- [新增角色指南](docs/ADDING_CHARACTER.md)
+- [联机版架构方案](docs/MULTIPLAYER_PLAN.md)
+
 ## 运行
 
 1. 用 Godot 4.6 打开 `project.godot`
