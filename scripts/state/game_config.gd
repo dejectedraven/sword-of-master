@@ -144,7 +144,13 @@ var chest_zone_size: float = 30.0    # 成功判定偏移量 (±px)
 var chest_heal_ratio: float = 0.3    # 治疗比例 (最大HP)
 var chest_speed_ramp: float = 20.0   # 每回合加速 px/s
 var chest_max_speed: float = 300.0   # 最高速度 px/s
-var chest_count: int = 2             # 每局生成数量
+var chest_count: int = 5             # 每局生成数量
+
+# ═══════════ 道具 (Items) ═══════════
+var blink_distance: float = 180.0       # 闪现位移距离 px
+var blink_invincible: float = 0.2       # 闪现无敌时间 秒
+var light_spirit_radius: float = 260.0  # 光精灵照明半径 px
+var light_spirit_energy: float = 1.0    # 光精灵光强度
 
 # ═══════════ Props.png 瓦片尺寸（备忘） ═══════════
 # assets/sprites/enemies/Props.png = 576×64

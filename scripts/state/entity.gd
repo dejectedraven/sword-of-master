@@ -23,6 +23,8 @@ var move_direction: Vector2 = Vector2.ZERO
 var is_ai_controlled: bool = false
 var team: int = 0  # 阵营：0=中立, 1=英雄方, 2=魔王方（防友伤）
 var input_locked: bool = false  # 开箱小游戏等场景锁定输入
+var blink_charges: int = 0      # 闪现道具数量（Q 使用）
+var light_spirit_count: int = 0 # 光精灵道具数量（E 放置）
 var _flash_timer: float = 0.0
 var _frame_timer: float = 0.0
 var _recovering: bool = false
@@ -205,11 +207,46 @@ func _input(event: InputEvent):
 				elif get_node_or_null("ComboAbility"): _try_combo()
 				else: _start_blocking()
 	if event is InputEventKey and event.pressed and not event.echo:
+		if event.is_action_pressed("skill_q"): _use_blink(); return
+		if event.is_action_pressed("skill_e"): _use_light_spirit(); return
 		match event.physical_keycode:
 			KEY_SPACE:
 				if get_node_or_null("TripleShotAbility"): _try_triple_shot()
 				elif get_node_or_null("ChargeAbility"): _try_charge()
 				elif get_node_or_null("RushAbility"): _try_rush()
+
+# ===== 道具 =====
+
+func add_item(kind: String):
+	match kind:
+		"blink": blink_charges += 1
+		"light_spirit": light_spirit_count += 1
+
+# 闪现：朝鼠标方向位移，撞墙截停，短暂无敌
+func _use_blink():
+	if blink_charges <= 0 or state == State.DEAD: return
+	blink_charges -= 1
+	var dir = _aim_dir()
+	if dir.length() < 0.01: dir = facing_direction
+	var target = global_position + dir * GameConfig.blink_distance
+	var space = get_world_2d().direct_space_state
+	var query = PhysicsRayQueryParameters2D.create(global_position, target, 2)
+	query.exclude = [self]
+	var result = space.intersect_ray(query)
+	if result: target = result.position - dir * 20.0
+	_invincible = true
+	var tw = create_tween()
+	tw.tween_property(self, "global_position", target, 0.12)
+	await tw.finished
+	_invincible = false
+
+# 光精灵：在当前位置放置一个固定光源
+func _use_light_spirit():
+	if light_spirit_count <= 0 or state == State.DEAD: return
+	light_spirit_count -= 1
+	var s = load("res://scenes/objects/light_spirit.tscn").instantiate()
+	s.position = global_position
+	get_tree().current_scene.add_child(s)
 
 func _try_attack():
 	if state in [State.ATTACK, State.BLOCK]: return

@@ -70,6 +70,12 @@ func _reward():
 	if is_instance_valid(_player_entity) and not _player_entity.health.is_dead:
 		var hp = _player_entity.health
 		hp.current_hp = min(hp.current_hp + hp.max_hp * GameConfig.chest_heal_ratio, hp.max_hp)
+		# 随机道具：闪现（Q）/ 光精灵（E）
+		var kind = "blink" if randi() % 2 == 0 else "light_spirit"
+		_player_entity.add_item(kind)
+		var txt = "闪现 x1" if kind == "blink" else "光精灵 x1"
+		var col = Color(0.55, 0.8, 1.0) if kind == "blink" else Color(0.6, 1.0, 0.85)
+		DamageNumber.spawn_label(get_tree().current_scene, global_position, txt, col)
 	# Godot 4.6 CPUParticles2D：initial_velocity→initial_velocity_min/max
 	# scale_amount→scale_amount_min/max；color→color_initial_ramp（Gradient）
 	var p = CPUParticles2D.new()

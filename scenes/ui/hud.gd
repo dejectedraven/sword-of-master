@@ -15,6 +15,7 @@ var _player_entity: Entity
 var _boss_entity: Entity
 var _extra_bars: Array = []
 var _end_buttons: Control
+var _item_label: Label
 
 func setup(pl: Entity, boss: Entity, allies: Array = [], enemies: Array = []):
 	_player_entity = pl
@@ -62,6 +63,18 @@ func _ready():
 	result_label.hide()
 	_create_skill_bar()
 	_create_end_buttons()
+	_create_item_label()
+
+func _create_item_label():
+	_item_label = Label.new()
+	_item_label.name = "ItemLabel"
+	_item_label.add_theme_font_size_override("font_size", 14)
+	_item_label.add_theme_color_override("font_color", Color(0.8, 0.95, 1.0))
+	var vs = get_viewport().get_visible_rect().size
+	_item_label.position = Vector2(vs.x / 2 - 160, vs.y - 106)
+	_item_label.size = Vector2(320, 20)
+	_item_label.horizontal_alignment = 1
+	add_child(_item_label)
 
 func _create_end_buttons():
 	var box = VBoxContainer.new()
@@ -127,6 +140,7 @@ func _process(_d: float):
 	_update_hp()
 	_update_skill_cd()
 	gold_label.text = "Gold: " + str(GameState.player_gold) + " / " + str(GameConfig.escape_gold_threshold)
+	_update_items()
 	if GameState.is_game_over:
 		result_label.show()
 		if _end_buttons: _end_buttons.show()
@@ -137,6 +151,17 @@ func _process(_d: float):
 				result_label.text = "VICTORY!" if GameState.selected_faction == GameState.Faction.HERO else "DEFEATED..."
 			GameState.VictoryType.TROLL_WIN:
 				result_label.text = "VICTORY!" if GameState.selected_faction == GameState.Faction.BOSS else "DEFEATED..."
+
+func _update_items():
+	if not _item_label: return
+	var p = _player_entity
+	if not p or not is_instance_valid(p):
+		_item_label.text = ""
+		return
+	var parts = []
+	if p.blink_charges > 0: parts.append("Q 闪现 x" + str(p.blink_charges))
+	if p.light_spirit_count > 0: parts.append("E 光精灵 x" + str(p.light_spirit_count))
+	_item_label.text = "    ".join(parts)
 
 func _update_hp():
 	if not _player_entity or not is_instance_valid(_player_entity): return

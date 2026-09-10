@@ -108,6 +108,25 @@ func _run():
 		await _wait_frames(2)
 		_check(door.door_state == 1, "100 金币后逃生门解锁")
 
+	# 道具：闪现（Q）与光精灵（E）
+	if player:
+		player.blink_charges = 1
+		var before_pos = player.global_position
+		player._use_blink()
+		await get_tree().create_timer(0.3).timeout
+		_check(player.global_position.distance_to(before_pos) > 50.0, "闪现位移生效")
+		_check(player.blink_charges == 0, "闪现消耗 1 层")
+		player.light_spirit_count = 1
+		player._use_light_spirit()
+		await _wait_frames(2)
+		var spirit_found = false
+		for c in get_children():
+			if c is LightSpirit: spirit_found = true
+		_check(spirit_found, "光精灵放置生效")
+		_check(player.light_spirit_count == 0, "光精灵消耗 1 个")
+	var hud_node = scene.get_node_or_null("HUD")
+	_check(hud_node != null and hud_node.get_node_or_null("ItemLabel") != null, "HUD 道具栏存在")
+
 	# 蓄力射：满蓄自动释放后必须回到 IDLE（原 bug 会永久卡 ATTACK）
 	var archer = load("res://scenes/entities/archer.tscn").instantiate()
 	archer.name = "Archer"
