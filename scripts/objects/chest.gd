@@ -67,11 +67,17 @@ func on_minigame_done(success: bool):
 	_state = ChestState.OPENED
 
 func _reward():
-	GameState.add_gold(GameConfig.chest_gold_amount)
-	if is_instance_valid(_player_entity) and not _player_entity.health.is_dead:
+	var player_ok = is_instance_valid(_player_entity) and not _player_entity.health.is_dead
+	# 治疗（基础收益）
+	if player_ok:
 		var hp = _player_entity.health
 		hp.current_hp = min(hp.current_hp + hp.max_hp * GameConfig.chest_heal_ratio, hp.max_hp)
-		# 随机道具：闪现（Q）/ 光精灵（E）
+	# 掉落：金币 或 道具（互斥，道具稀释金币产出）
+	if randf() < GameConfig.chest_gold_chance:
+		GameState.add_gold(GameConfig.chest_gold_amount)
+		DamageNumber.spawn_label(get_tree().current_scene, global_position,
+			"+" + str(GameConfig.chest_gold_amount) + " 金币", Color(1, 0.85, 0.3))
+	elif player_ok:
 		var kind = "blink" if randi() % 2 == 0 else "light_spirit"
 		_player_entity.add_item(kind)
 		var txt = "闪现 x1" if kind == "blink" else "光精灵 x1"

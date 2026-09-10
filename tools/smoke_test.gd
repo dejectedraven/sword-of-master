@@ -111,6 +111,21 @@ func _run():
 	_check(door != null, "逃生门已生成")
 	_check(first_chest != null and first_chest.get_node_or_null("ChestGlow") != null, "宝箱有自发光")
 
+	# 宝箱掉落互斥：金币 or 道具（概率在 GameConfig 调）
+	if first_chest and player:
+		first_chest._player_entity = player
+		var gold_before = GameState.player_gold
+		var items_before = player.blink_charges + player.light_spirit_count
+		GameConfig.chest_gold_chance = 1.0
+		first_chest._reward()
+		_check(GameState.player_gold == gold_before + GameConfig.chest_gold_amount, "金币宝箱给金币")
+		_check(player.blink_charges + player.light_spirit_count == items_before, "金币宝箱不给道具")
+		GameConfig.chest_gold_chance = 0.0
+		first_chest._reward()
+		_check(GameState.player_gold == gold_before + GameConfig.chest_gold_amount, "道具宝箱不给金币")
+		_check(player.blink_charges + player.light_spirit_count == items_before + 1, "道具宝箱给 1 个道具")
+		GameConfig.chest_gold_chance = 0.5
+
 	# 逃生门：金币不足锁定，达到阈值解锁
 	if door:
 		_check(door.door_state == 0, "逃生门初始锁定")

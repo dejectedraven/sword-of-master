@@ -123,12 +123,13 @@ var archer_ai_triple_range: float = 150.0       # 三连射触发距离 (px)
 # ═══════════ 宝箱 (Chest) ═══════════
 
 var chest_gold_amount: int = 50       # 开宝箱获得金币
+var chest_gold_chance: float = 0.5    # 开箱给金币的概率（其余概率给道具，两者互斥）
 var escape_gold_threshold: int = 100  # 逃生门所需金币
 
 # ═══════════ 黑夜 / 视野 ═══════════
 # 全部为测试数值，直接改这里运行看效果
-var night_color: Color = Color(0.16, 0.18, 0.30)  # 夜色浓度（RGB 越亮夜色越浅）
-var camera_zoom: float = 2.0                       # 相机缩放（2.0 = 可见范围约 576×324px）
+var night_color: Color = Color(0.07, 0.08, 0.15)  # 夜色浓度（越暗视野外越黑，只留周身光圈）
+var camera_zoom: float = 1.0                       # 相机缩放（1.0 = 原始比例，角色周身可见即可）
 var vision_light_energy: float = 0.95              # 视野光强度（过高角色会过曝发白）
 var vision_light_color: Color = Color(1.0, 0.96, 0.85)  # 视野光颜色（暖色像火把）
 var chest_glow_radius: float = 70.0                # 宝箱微弱自发光半径（黑暗中可辨认）
