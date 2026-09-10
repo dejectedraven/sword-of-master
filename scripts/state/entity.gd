@@ -226,6 +226,7 @@ func add_item(kind: String):
 func _use_blink():
 	if blink_charges <= 0 or state == State.DEAD: return
 	blink_charges -= 1
+	GameState.emit_noise(global_position)  # 闪现出声暴露位置
 	var dir = _aim_dir()
 	if dir.length() < 0.01: dir = facing_direction
 	var target = global_position + dir * GameConfig.blink_distance
@@ -244,6 +245,7 @@ func _use_blink():
 func _use_light_spirit():
 	if light_spirit_count <= 0 or state == State.DEAD: return
 	light_spirit_count -= 1
+	GameState.emit_noise(global_position)  # 放置出声暴露位置
 	var s = load("res://scenes/objects/light_spirit.tscn").instantiate()
 	s.position = global_position
 	get_tree().current_scene.add_child(s)

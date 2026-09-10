@@ -16,6 +16,14 @@ func _physics_process(delta: float):
 	if _attacking:
 		entity.move_direction = Vector2.ZERO
 		return
+	# 潜行约束：离敌人太远时回到玩家身边，不单独深入黑暗
+	var scene = get_tree().current_scene
+	var player = scene.get("hero_entity") if scene else null
+	if player and player is Entity and not player.is_ai_controlled:
+		if entity.global_position.distance_to(target.global_position) > GameConfig.ally_engage_radius:
+			var d = player.global_position - entity.global_position
+			entity.move_direction = d.normalized() if d.length() > 140.0 else Vector2.ZERO
+			return
 	var dist = entity.global_position.distance_to(target.global_position)
 	_skill_timer += delta
 	if entity.health.hp_ratio() < GameConfig.warrior_ai_retreat_hp: _retreating = true

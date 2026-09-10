@@ -38,7 +38,7 @@ var warrior_chest_speed: float = 120.0   # 开箱指针对位速度 px/s
 
 # ═══════════ 英雄 - 弓箭手 (Archer) ═══════════
 
-var archer_hp: float = 60             # 最大生命
+var archer_hp: float = 80             # 最大生命（黑夜潜行版本：60→80）
 var archer_speed: float = 220.0          # 移动速度 px/s
 var archer_attack: float = 12.0          # 射击伤害
 var archer_defense: float = 3.0          # 防御
@@ -65,7 +65,7 @@ var archer_chest_speed: float = 160.0    # 开箱指针对位速度 px/s
 
 var troll_hp: float = 300.0             # 最大生命
 var troll_speed: float = 130.0           # 移动速度 px/s
-var troll_attack: float = 22.0           # 平砍伤害
+var troll_attack: float = 16.0           # 平砍伤害（黑夜潜行版本：22→16）
 var troll_defense: float = 10.0          # 防御
 
 var troll_slash_cooldown: float = 1.0    # 横斩冷却 (秒)
@@ -76,7 +76,7 @@ var troll_rush_cooldown: float = 15.0    # 狂暴冲锋冷却 (秒)
 var troll_rush_duration: float = 8.0     # 冲刺持续 (秒)
 var troll_rush_start: float = 50      # 起始速度 px/s
 var troll_rush_max: float = 800.0        # 最高速度 px/s
-var troll_rush_damage: float = 45.0      # 碰撞伤害
+var troll_rush_damage: float = 32.0      # 碰撞伤害（黑夜潜行版本：45→32）
 var troll_rush_hitbox: float = 120.0     # 判定框边长 (px)
 var troll_rush_offset: float = 80.0      # 判定框前移量 (px)
 var troll_rush_exhaust: float = 2.0      # 力竭时长 (秒)
@@ -95,7 +95,7 @@ var troll_chest_speed: float = 80.0      # 开箱指针对位速度 px/s
 var troll_combo_cooldown: float = 3.0    # 三连击冷却 (秒)
 var troll_combo_duration: float = 0.6    # 三连击总时长 (秒)
 var troll_combo_range: float = 64.0      # 判定框长度 (px)
-var troll_combo_damage: float = 12.0     # 每击伤害
+var troll_combo_damage: float = 8.0      # 每击伤害（黑夜潜行版本：12→8）
 
 # ═══════════ AI - 战士 ═══════════
 
@@ -138,6 +138,7 @@ var archer_vision_radius: float = 260.0            # 弓箭手视野光圈半径
 var troll_vision_radius: float = 320.0             # 巨魔（玩家操控时）视野半径 px
 var troll_ai_detect_radius: float = 320.0          # 巨魔 AI 探测半径 px（阶段4 AI 用）
 var troll_ai_hear_radius: float = 420.0            # 巨魔 AI 听声半径 px（阶段4 AI 用）
+var ally_engage_radius: float = 380.0              # AI 队友离敌人超过此距离就回到玩家身边
 
 var chest_speed: float = 120.0       # 指针对位初始速度 px/s
 var chest_zone_size: float = 30.0    # 成功判定偏移量 (±px)

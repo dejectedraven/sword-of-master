@@ -42,6 +42,7 @@ func _on_exited(body):
 func _start_minigame():
 	if not is_instance_valid(_player_entity) or _player_entity.health.is_dead: return
 	_state = ChestState.MINIGAME
+	GameState.emit_noise(global_position)  # 开箱出声，可能引来巨魔
 	# 小游戏期间锁定玩家输入（不能移动/攻击/格挡）
 	_player_entity.stop_blocking()
 	_player_entity.input_locked = true

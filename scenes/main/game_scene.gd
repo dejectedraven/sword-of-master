@@ -97,7 +97,9 @@ func _spawn(id: String, pos: Vector2, is_ai: bool) -> Entity:
 
 func _load_ai(name: String) -> Node:
 	var m = {"Warrior": "res://scripts/controllers/ai_warrior.gd", "Archer": "res://scripts/controllers/ai_archer.gd", "Troll": "res://scripts/controllers/ai_troll.gd"}
-	return load(m.get(name, "res://scripts/controllers/ai_warrior.gd")).new()
+	var ai = load(m.get(name, "res://scripts/controllers/ai_warrior.gd")).new()
+	ai.name = "AI"
+	return ai
 
 func _add_floor():
 	var floor = ColorRect.new()

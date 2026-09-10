@@ -68,6 +68,16 @@ func _run():
 	var p_cam = player.get_node_or_null("Camera2D") if player else null
 	_check(p_cam != null and is_equal_approx(p_cam.zoom.x, GameConfig.camera_zoom), "相机缩放生效")
 
+	# 巨魔 AI 潜行状态机：初始巡逻 + 听声搜索
+	var troll_ai = troll.get_node_or_null("AI") if troll else null
+	_check(troll_ai != null, "巨魔 AI 节点存在")
+	if troll_ai:
+		_check(troll_ai._state == 0, "巨魔初始巡逻状态")
+		GameState.emit_noise(troll.global_position + Vector2(80, 0))
+		await _wait_frames(2)
+		_check(troll_ai._state == 2, "听声后进入搜索状态")  # AIState: PATROL=0 CHASE=1 SEARCH=2
+	_check(GameConfig.troll_attack < 20.0, "巨魔伤害已平衡")
+
 	# 障碍物：数量、遮挡、灌木可穿行
 	var obstacle_count = 0
 	var occluder_count = 0
