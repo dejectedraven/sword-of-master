@@ -8,10 +8,22 @@ var _heroes_alive: int = 0
 var _camera_holder: Entity
 var map_size: Vector2 = Vector2(1280, 720)
 
+# 障碍物布局：["类型", x, y]，类型 = tree/rock/bush/stump
+const OBSTACLE_LAYOUT = [
+	# 中场掩体
+	["tree", 400, 250], ["tree", 700, 150], ["tree", 850, 520],
+	["tree", 920, 120], ["tree", 720, 560], ["tree", 180, 620],
+	["rock", 320, 560], ["rock", 780, 320], ["rock", 1150, 480], ["rock", 500, 620],
+	["bush", 280, 120], ["bush", 650, 380], ["bush", 880, 240], ["bush", 150, 300], ["bush", 1150, 300],
+	["stump", 550, 120], ["stump", 880, 620],
+]
+
 func _ready():
+	y_sort_enabled = true  # 按 Y 排序，角色可走到树后/树前
 	_add_floor()
 	_add_walls()
 	_add_night()
+	_spawn_obstacles()
 	_instantiate_characters()
 	_spawn_chests()
 	_spawn_escape_door()
@@ -115,6 +127,54 @@ func _add_night():
 	night.name = "Night"
 	night.color = GameConfig.night_color
 	add_child(night)
+
+# 障碍物：中场掩体 + 边界树墙（视觉化地图边界）
+func _spawn_obstacles():
+	for d in OBSTACLE_LAYOUT:
+		_add_obstacle(d[0], d[1], d[2])
+	for x in range(120, 1280, 250):
+		_add_obstacle("tree", x, 40)
+		_add_obstacle("tree", x, 680)
+	for y in range(160, 720, 240):
+		_add_obstacle("tree", 40, y)
+		_add_obstacle("tree", 1240, y)
+
+func _add_obstacle(kind: String, x: float, y: float):
+	var prefix = ""
+	var frames = 1
+	var cfg = {}
+	match kind:
+		"tree":
+			prefix = "res://assets/environment/props/trees/Tree"
+			frames = 8
+			cfg = {"base_ratio": 0.9, "collision_size": Vector2(34, 20), "collision_offset_y": -10.0,
+				"occluder_points": PackedVector2Array([
+					Vector2(0.5, 0.06), Vector2(0.06, 0.85), Vector2(0.94, 0.85)])}
+		"stump":
+			prefix = "res://assets/environment/props/trees/Stump"
+			cfg = {"base_ratio": 0.92, "collision_size": Vector2(40, 22), "collision_offset_y": -11.0,
+				"occluder_points": PackedVector2Array([
+					Vector2(0.35, 0.75), Vector2(0.65, 0.75), Vector2(0.68, 0.95), Vector2(0.32, 0.95)])}
+		"rock":
+			prefix = "res://assets/environment/props/rocks/Rock"
+			cfg = {"base_ratio": 0.85, "collision_size": Vector2(40, 24), "collision_offset_y": -12.0,
+				"occluder_points": PackedVector2Array([
+					Vector2(0.5, 0.1), Vector2(0.9, 0.45), Vector2(0.75, 0.88),
+					Vector2(0.25, 0.88), Vector2(0.1, 0.45)])}
+		"bush":
+			prefix = "res://assets/environment/props/bushes/Bush"
+			frames = 8
+			cfg = {"base_ratio": 0.85, "blocks_movement": false,
+				"occluder_points": PackedVector2Array([
+					Vector2(0.5, 0.1), Vector2(0.92, 0.4), Vector2(0.85, 0.85),
+					Vector2(0.15, 0.85), Vector2(0.08, 0.4)])}
+	var o = load("res://scenes/objects/obstacle.tscn").instantiate()
+	o.texture = load(prefix + str(randi() % 4 + 1) + ".png")
+	o.frames = frames
+	for k in cfg:
+		o.set(k, cfg[k])
+	o.position = Vector2(x, y)
+	add_child(o)
 
 func _spawn_chests():
 	var cfg = GameConfig

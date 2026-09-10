@@ -68,6 +68,21 @@ func _run():
 	var p_cam = player.get_node_or_null("Camera2D") if player else null
 	_check(p_cam != null and is_equal_approx(p_cam.zoom.x, GameConfig.camera_zoom), "相机缩放生效")
 
+	# 障碍物：数量、遮挡、灌木可穿行
+	var obstacle_count = 0
+	var occluder_count = 0
+	var bush_has_body = false
+	for c in scene.get_children():
+		if c is Obstacle:
+			obstacle_count += 1
+			if c.get_node_or_null("Occluder") != null:
+				occluder_count += 1
+			if not c.blocks_movement and c.get_node_or_null("Body") != null:
+				bush_has_body = true
+	_check(obstacle_count > 20, "障碍物已生成 x" + str(obstacle_count))
+	_check(occluder_count > 0, "障碍物带视线遮挡 x" + str(occluder_count))
+	_check(not bush_has_body, "灌木不挡移动（可穿行）")
+
 	# 英雄方 3 人：玩家 + 2 AI 队友
 	_check(scene.ai_allies.size() == 2, "AI 队友数量 = 2")
 	_check(scene._heroes_alive == 3, "英雄方总数 = 3")
