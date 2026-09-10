@@ -11,6 +11,7 @@ static func spawn(parent: Node, world_pos: Vector2, amount: float, color: Color 
 	n.size = Vector2(60, 24)
 	n.position = world_pos + Vector2(randf_range(-12, 12) - 30, -56)
 	n.z_index = 100
+	n.material = Unshaded.material()  # 夜里飘字也要可见
 	n.add_theme_font_size_override("font_size", 18)
 	n.add_theme_color_override("font_color", color)
 	n.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.8))

@@ -67,12 +67,23 @@ func _ready():
 		_charge_bg.size = Vector2(40, 4)
 		_charge_bg.color = Color(0, 0, 0, 0.6)
 		_charge_bg.position = Vector2(-20, -40)
+		_charge_bg.material = Unshaded.material()
 		add_child(_charge_bg)
 		_charge_bg.hide()
 		_charge_fill = ColorRect.new()
 		_charge_fill.size = Vector2(0, 4)
 		_charge_fill.color = Color(1, 0.8, 0, 0.9)
+		_charge_fill.material = Unshaded.material()
 		_charge_bg.add_child(_charge_fill)
+	# 黑夜视野光：英雄（玩家+AI队友）和玩家操控的巨魔有光圈；AI 巨魔藏在黑暗中
+	if not ("Troll" in name and is_ai_controlled):
+		_create_vision_light()
+
+func _create_vision_light():
+	var l = VisionLight.new()
+	l.name = "VisionLight"
+	l.configure(_cv("vision_radius"), GameConfig.vision_light_energy, true, GameConfig.vision_light_color)
+	add_child(l)
 
 # ⚠ 必须每个 _try_*() 的 await 后加 if health.is_dead: return，否则 coroutine 会重置 state 覆盖 DEAD
 func _physics_process(_d: float):

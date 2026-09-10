@@ -125,6 +125,20 @@ var archer_ai_triple_range: float = 150.0       # 三连射触发距离 (px)
 var chest_gold_amount: int = 50       # 开宝箱获得金币
 var escape_gold_threshold: int = 100  # 逃生门所需金币
 
+# ═══════════ 黑夜 / 视野 ═══════════
+# 全部为测试数值，直接改这里运行看效果
+var night_color: Color = Color(0.16, 0.18, 0.30)  # 夜色浓度（RGB 越亮夜色越浅）
+var camera_zoom: float = 2.0                       # 相机缩放（2.0 = 可见范围约 576×324px）
+var vision_light_energy: float = 0.95              # 视野光强度（过高角色会过曝发白）
+var vision_light_color: Color = Color(1.0, 0.96, 0.85)  # 视野光颜色（暖色像火把）
+var chest_glow_radius: float = 70.0                # 宝箱微弱自发光半径（黑暗中可辨认）
+var chest_glow_energy: float = 0.5                 # 宝箱自发光强度
+var warrior_vision_radius: float = 220.0           # 战士视野光圈半径 px
+var archer_vision_radius: float = 260.0            # 弓箭手视野光圈半径 px
+var troll_vision_radius: float = 320.0             # 巨魔（玩家操控时）视野半径 px
+var troll_ai_detect_radius: float = 320.0          # 巨魔 AI 探测半径 px（阶段4 AI 用）
+var troll_ai_hear_radius: float = 420.0            # 巨魔 AI 听声半径 px（阶段4 AI 用）
+
 var chest_speed: float = 120.0       # 指针对位初始速度 px/s
 var chest_zone_size: float = 30.0    # 成功判定偏移量 (±px)
 var chest_heal_ratio: float = 0.3    # 治疗比例 (最大HP)

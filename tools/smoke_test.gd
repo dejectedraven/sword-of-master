@@ -57,20 +57,34 @@ func _run():
 			if c is DamageNumber: found = true
 		_check(found, "伤害飘字已生成")
 
+	# 黑夜与视野
+	_check(scene.get_node_or_null("Night") != null, "夜色 CanvasModulate 存在")
+	if player:
+		_check(player.get_node_or_null("VisionLight") != null, "玩家有视野光")
+	if troll:
+		_check(troll.get_node_or_null("VisionLight") == null, "AI 巨魔无视野光（藏黑暗中）")
+	if scene.ai_allies.size() > 0:
+		_check(scene.ai_allies[0].get_node_or_null("VisionLight") != null, "AI 队友有视野光")
+	var p_cam = player.get_node_or_null("Camera2D") if player else null
+	_check(p_cam != null and is_equal_approx(p_cam.zoom.x, GameConfig.camera_zoom), "相机缩放生效")
+
 	# 英雄方 3 人：玩家 + 2 AI 队友
 	_check(scene.ai_allies.size() == 2, "AI 队友数量 = 2")
 	_check(scene._heroes_alive == 3, "英雄方总数 = 3")
 
 	# 宝箱与逃生门存在（用方法判定，避免重名节点 @Chest@2 漏数）
 	var chest_count = 0
+	var first_chest = null
 	var door = null
 	for c in scene.get_children():
 		if c.has_method("on_minigame_done"):
 			chest_count += 1
+			if not first_chest: first_chest = c
 		elif c.name == "EscapeDoor":
 			door = c
 	_check(chest_count == GameConfig.chest_count, "宝箱已生成 x" + str(chest_count) + "/" + str(GameConfig.chest_count))
 	_check(door != null, "逃生门已生成")
+	_check(first_chest != null and first_chest.get_node_or_null("ChestGlow") != null, "宝箱有自发光")
 
 	# 逃生门：金币不足锁定，达到阈值解锁
 	if door:
@@ -122,6 +136,7 @@ func _run():
 	add_child(boss_scene)
 	await _wait_frames(5)
 	_check(boss_scene.ai_enemies.size() == 3, "Boss 模式 AI 英雄 = 3")
+	_check(boss_scene.troll_entity.get_node_or_null("VisionLight") != null, "Boss 模式玩家巨魔有视野光")
 
 	print("=== 冒烟测试结束: ", _pass, " 通过, ", _fail, " 失败 ===")
 	get_tree().quit(0 if _fail == 0 else 1)

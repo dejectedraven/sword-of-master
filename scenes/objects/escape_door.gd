@@ -12,6 +12,9 @@ var _particles: CPUParticles2D
 
 func _ready():
 	body_entered.connect(_on_body_entered)
+	# 夜里传送门的光/提示始终可见（当灯塔用）
+	glow.material = Unshaded.material()
+	hint.material = Unshaded.material()
 	_particles = _make_portal_particles()
 	add_child(_particles)
 	_update_visual()

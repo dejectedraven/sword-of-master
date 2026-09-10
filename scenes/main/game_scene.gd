@@ -11,6 +11,7 @@ var map_size: Vector2 = Vector2(1280, 720)
 func _ready():
 	_add_floor()
 	_add_walls()
+	_add_night()
 	_instantiate_characters()
 	_spawn_chests()
 	_spawn_escape_door()
@@ -71,7 +72,8 @@ func _spawn(id: String, pos: Vector2, is_ai: bool) -> Entity:
 	e.is_ai_controlled = is_ai
 	var cam = e.get_node_or_null("Camera2D")
 	if cam:
-		# 相机限制在地图内，避免看到地图外的空白
+		# 相机缩放（黑夜视野）与地图边界限制
+		cam.zoom = Vector2(GameConfig.camera_zoom, GameConfig.camera_zoom)
 		cam.limit_left = 0
 		cam.limit_top = 0
 		cam.limit_right = int(map_size.x)
@@ -106,6 +108,13 @@ func _add_walls():
 		shape.shape = rect; shape.position = wall[0]
 		walls.add_child(shape)
 	add_child(walls)
+
+# 黑夜：CanvasModulate 压暗全场，英雄视野光负责照亮
+func _add_night():
+	var night = CanvasModulate.new()
+	night.name = "Night"
+	night.color = GameConfig.night_color
+	add_child(night)
 
 func _spawn_chests():
 	var cfg = GameConfig

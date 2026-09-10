@@ -12,7 +12,13 @@ var _player_entity: Entity = null
 func _ready():
 	$InteractArea.body_entered.connect(_on_entered)
 	$InteractArea.body_exited.connect(_on_exited)
+	prompt.material = Unshaded.material()  # 夜里提示可见
 	prompt.hide()
+	# 微弱自发光：黑暗中能辨认宝箱轮廓
+	var glow = VisionLight.new()
+	glow.name = "ChestGlow"
+	glow.configure(GameConfig.chest_glow_radius, GameConfig.chest_glow_energy, false)
+	add_child(glow)
 
 func _input(event):
 	if _state != ChestState.CLOSED or not _player_nearby: return
