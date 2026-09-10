@@ -1,5 +1,38 @@
 # 更新日志
 
+## [0.6.0] — 2026-09-10
+
+### ✨ 新增
+- **金币系统**：`GameState.player_gold` + `add_gold()` + `gold_changed` 信号；宝箱成功给 50 金币 + 30% 回血
+- **逃生门**：集满 100 金币解锁（红色锁定 → 绿色脉冲 + 粒子），玩家进入触发 `ESCAPE_WIN` 第三种结局
+- **伤害飘字**：`scripts/ui/damage_number.gd`，普通白 / 格挡蓝 / 大伤害橙，上飘淡出
+- **3 英雄阵容**：英雄模式玩家 + 2 AI 队友（先保证另一职业再随机补位）；Boss 模式 1v3 AI 英雄
+- **死亡视角切换**：玩家阵亡后相机自动绑到存活队友（`_camera_holder` + `_bind_camera_to_living_hero()`）
+- **结算界面**：游戏结束显示「再来一局」（保留阵营角色）/「返回标题」按钮
+- **阵营系统**：`Entity.team`（英雄 1 / 魔王 2），4 处近战 + 3 处箭矢命中过滤，友军穿透免伤
+- **地宫生成工具**：`tools/setup_dungeon.gd`（@tool EditorScript），一键生成 TileSet + 80×45 TileMap（6 房间 + 走廊）
+- **冒烟测试**：`tools/smoke_test.tscn`，无头运行 21 项断言（`godot --headless --path <项目> res://tools/smoke_test.tscn`）
+- **联机方案文档**：`docs/MULTIPLAYER_PLAN.md`（1v3 ENet host-authoritative）
+
+### 🔧 修复
+- **蓄力射满蓄吞箭 + 永久卡 ATTACK**：满蓄自动释放改为回调 `entity._do_charge_release(data)`，正常射箭并复位
+- **AI 蓄力射瞄鼠标**：`charge_shot_ability` 仅对玩家 `_face_mouse()`；AI 等待自动释放
+- **逃生门锁定不挡人**：`LockedBody.collision_layer=2`，碰撞形状对齐视觉，`try_unlock` 加重复 guard
+- **普攻无 CD 检查**：CD 内不再空放攻击动画
+- **攻击中残留移动**：ATTACK 状态清空 `move_direction`
+- **AI 战士格挡死锁**：AI 格挡 0.5s 后自动解除（AI 不走 `_read_block_input`）
+- **HUD 金币条与 Boss 血条重叠**：金币条移到右上角
+- **相机越界**：相机限制在地图 0..1280×0..720 内
+- **箭矢 Tween 报错**：Tween 改绑箭节点，命中释放时自动停止（不再 lambda 捕获已释放对象）
+- **开箱保护**：小游戏期间锁定玩家输入；死亡后不可开箱、不会被治疗
+- **宝箱治疗比例不一致**：统一读 `GameConfig.chest_heal_ratio`（30%）
+- **战士死亡表现**：精灵表无死亡帧，改用通用倒地（旋转 + 变暗）；巨魔继续用自带死亡帧
+- **地图坐标错乱**：恢复 1280×720 白板地图（灰底 + 四边隐形墙 + 相机限制）
+- `chest.tscn` 空 UID 警告
+
+### 💥 移除
+- 死代码清理：`arrow.tscn` / `arrow_bullet.gd` / `dodge_ability.gd` / `entity_stats.gd` + `resources/stats/`
+
 ## [0.5.0] — 2026-07-05
 
 ### ✨ 新增

@@ -79,12 +79,10 @@ func _use_charge_shot():
 	var ab = entity.get_node_or_null("ChargeShotAbility")
 	if ab:
 		ab.start_charge()
-		await get_tree().create_timer(GameConfig.archer_charge_max_time).timeout
+		# 满蓄后 ability._process 自动释放并回调 entity._do_charge_release（播放动画→射箭→复位）
+		await get_tree().create_timer(GameConfig.archer_charge_max_time + 0.1).timeout
 		if entity.health.is_dead: _attacking = false; return
-		var data = ab.release_charge()
-		if data.size() > 0:
-			ab.fire_arrow(data.dir, data.damage, data.speed, data.range)
-	await get_tree().create_timer(entity._cv("attack_time")).timeout
+	await get_tree().create_timer(entity._cv("attack_time") + 0.2).timeout
 	if entity.health.is_dead: _attacking = false; return
 	entity.state = Entity.State.IDLE
 	entity.play_anim("idle")

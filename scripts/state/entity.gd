@@ -4,7 +4,6 @@ extends CharacterBody2D
 enum State { IDLE, RUN, ATTACK, BLOCK, DEAD }
 
 @export var speed: float = 400
-@export var stats: EntityStats
 
 @export_group("Simple Anim")
 @export var idle_texture: Texture2D
@@ -22,6 +21,8 @@ var state: State = State.IDLE
 var facing_direction: Vector2 = Vector2.DOWN
 var move_direction: Vector2 = Vector2.ZERO
 var is_ai_controlled: bool = false
+var team: int = 0  # 阵营：0=中立, 1=英雄方, 2=魔王方（防友伤）
+var input_locked: bool = false  # 开箱小游戏等场景锁定输入
 var _flash_timer: float = 0.0
 var _frame_timer: float = 0.0
 var _recovering: bool = false
@@ -104,18 +105,33 @@ func _process(delta: float):
 			_frame_timer = 0.0; sprite.frame = min(sprite.frame + 1, dead_frames - 1)
 
 func _set_dead_anim():
-	if anim_tree: return
+	if anim_tree:
+		# 战士无死亡帧：停树后倒地（旋转+变暗）
+		anim_tree.active = false
+		_fall_over()
+		return
 	if dead_texture:
 		sprite.texture = dead_texture; sprite.hframes = dead_frames; sprite.frame = 0
 	elif exhaust_texture:
 		sprite.texture = exhaust_texture; sprite.hframes = exhaust_frames; sprite.frame = 0
+	else:
+		_fall_over()
+
+# 无死亡素材的角色：精灵倒向面朝方向 + 变暗
+func _fall_over():
+	var dir = -90.0 if sprite.flip_h else 90.0
+	var tw = create_tween().set_parallel(true)
+	tw.tween_property(sprite, "rotation_degrees", dir, 0.5).set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_OUT)
+	tw.tween_property(sprite, "modulate", Color(0.45, 0.45, 0.5), 0.5)
 
 func _read_input():
 	if is_ai_controlled: return
+	if input_locked: move_direction = Vector2.ZERO; return
 	if _exhausted or _recovering:
 		move_direction = Vector2.ZERO; return
 	if state == State.BLOCK: return _read_block_input()
 	if state == State.ATTACK:
+		move_direction = Vector2.ZERO
 		var charge_ab = get_node_or_null("ChargeShotAbility")
 		if charge_ab and charge_ab._charging and not Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT):
 			var data = charge_ab.release_charge()
@@ -167,9 +183,9 @@ func _update_flip():
 # ⚠ 按键路由顺序：
 #   LMB → ArrowAbility→SlashAbility（远程优先）
 #   RMB → ChargeShotAbility→ComboAbility→_start_blocking
-#   SPC → TripleShotAbility→ChargeAbility→DodgeAbility→RushAbility
+#   SPC → TripleShotAbility→ChargeAbility→RushAbility
 func _input(event: InputEvent):
-	if state == State.DEAD or is_ai_controlled or _recovering: return
+	if state == State.DEAD or is_ai_controlled or _recovering or input_locked: return
 	if event is InputEventMouseButton and event.pressed:
 		match event.button_index:
 			MOUSE_BUTTON_LEFT: _try_attack()
@@ -182,14 +198,13 @@ func _input(event: InputEvent):
 			KEY_SPACE:
 				if get_node_or_null("TripleShotAbility"): _try_triple_shot()
 				elif get_node_or_null("ChargeAbility"): _try_charge()
-				elif get_node_or_null("DodgeAbility"): _try_dodge()
 				elif get_node_or_null("RushAbility"): _try_rush()
 
 func _try_attack():
 	if state in [State.ATTACK, State.BLOCK]: return
 	var ab = get_node_or_null("ArrowAbility") as AbilityBase
 	if not ab: ab = get_node_or_null("SlashAbility") as AbilityBase
-	if not ab: return
+	if not ab or ab.is_on_cooldown: return
 	_face_mouse(); state = State.ATTACK
 	play_attack_anim(_aim_dir())
 	await ab.use()
@@ -242,16 +257,6 @@ func _try_rush():
 	if health.is_dead: return
 	state = State.IDLE; play_anim("idle")
 
-func _try_dodge():
-	if state in [State.ATTACK, State.BLOCK]: return
-	var ab = get_node_or_null("DodgeAbility") as AbilityBase
-	if not ab: return
-	_face_mouse(); state = State.ATTACK
-	play_attack_anim(_aim_dir())
-	await ab.use()
-	if health.is_dead: return
-	state = State.IDLE; play_anim("idle")
-
 func _try_charge_shot():
 	if state in [State.ATTACK, State.BLOCK]: return
 	var ab = get_node_or_null("ChargeShotAbility")
@@ -283,6 +288,7 @@ func _try_triple_shot():
 	state = State.IDLE; play_anim("idle")
 
 func _restore_color():
+	if state == State.DEAD: return  # 死亡变暗不可被受击闪白覆盖
 	sprite.modulate = Color(0.3, 0.5, 1.0) if state == State.BLOCK else Color.WHITE
 
 func _start_blocking():
@@ -308,8 +314,12 @@ func _face_mouse():
 
 func take_damage(amount: float):
 	if _invincible: return
-	var mult = 1.0 - _cv("block_reduction") if state == State.BLOCK else 1.0
-	if state == State.BLOCK: _break_block()
+	var blocked = state == State.BLOCK
+	var mult = 1.0 - _cv("block_reduction") if blocked else 1.0
+	if blocked: _break_block()
 	var fd = amount * mult * (100.0 / (100.0 + _cv("defense")))
 	health.take_damage(fd)
+	# 伤害飘字：格挡=蓝，大伤害(蓄力箭)=橙，普通=白
+	var col = Color(0.5, 0.75, 1.0) if blocked else (Color(1, 0.8, 0.2) if fd >= 25.0 else Color(1, 1, 1))
+	DamageNumber.spawn(get_tree().current_scene, global_position, fd, col)
 	sprite.modulate = Color.RED; _flash_timer = 0.25

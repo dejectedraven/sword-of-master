@@ -94,7 +94,10 @@ func _input(event):
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F:
 		_done = true
 		_success = abs(_pointer_pos) < GameConfig.chest_zone_size
-		_result.text = "获得财宝!" if _success else "空的..."
+		if _success:
+			_result.text = "获得 " + str(GameConfig.chest_gold_amount) + " 金币!"
+		else:
+			_result.text = "空的..."
 		_result.add_theme_color_override("font_color", Color(1, 0.85, 0.3) if _success else Color(0.6, 0.6, 0.6))
 		_result.show()
 		_hint.hide()

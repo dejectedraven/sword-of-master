@@ -28,6 +28,7 @@ func use() -> bool:
 
 func _on_hitbox_body(body: Node):
 	if body == owner_entity or body in _hit_targets: return
+	if body is Entity and body.team == owner_entity.team: return  # 友军免伤
 	_hit_targets.append(body)
 	if body.has_method("take_damage"):
 		body.take_damage(GameConfig.troll_combo_damage)

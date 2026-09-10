@@ -35,8 +35,16 @@ func _physics_process(delta: float):
 
 func _retreat():
 	entity.move_direction = (entity.global_position - target.global_position).normalized()
+	if entity.state == Entity.State.BLOCK: return
 	if randf() < GameConfig.warrior_ai_block_chance * 0.02:
-		entity._start_blocking()
+		_release_block_soon()
+
+# AI 的 _read_input 直接 return，不会走 _read_block_input，所以必须自己定时解除
+func _release_block_soon():
+	entity._start_blocking()
+	await get_tree().create_timer(0.5).timeout
+	if is_instance_valid(entity) and entity.state == Entity.State.BLOCK:
+		entity.stop_blocking()
 
 func _find_target():
 	var scene = get_tree().current_scene

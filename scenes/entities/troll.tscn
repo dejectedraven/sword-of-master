@@ -3,7 +3,6 @@
 [ext_resource type="Script" path="res://scripts/state/entity.gd" id="1_entity"]
 [ext_resource type="Script" path="res://scripts/components/health_component.gd" id="2_health"]
 [ext_resource type="Script" path="res://scripts/components/slash_ability.gd" id="3_slash"]
-[ext_resource type="Resource" path="res://resources/stats/troll_stats.tres" id="4_stats"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/troll/Troll_Idle.png" id="5_idle"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/troll/Troll_Walk.png" id="6_walk"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/troll/Troll_Attack.png" id="7_attack"]
@@ -17,7 +16,6 @@ size = Vector2(64, 64)
 
 [node name="Troll" type="CharacterBody2D"]
 script = ExtResource("1_entity")
-stats = ExtResource("4_stats")
 idle_texture = ExtResource("5_idle")
 run_texture = ExtResource("6_walk")
 attack_texture = ExtResource("7_attack")

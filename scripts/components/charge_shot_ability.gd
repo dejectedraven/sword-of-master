@@ -12,9 +12,15 @@ func _process(delta):
 	if not _charging: return
 	if owner_entity.health.is_dead: _charging = false; return
 	_charge_time += delta
-	owner_entity._face_mouse()
+	# AI 不瞄鼠标（否则 AI 蓄力箭射向玩家光标）
+	if not owner_entity.is_ai_controlled:
+		owner_entity._face_mouse()
 	if _charge_time >= GameConfig.archer_charge_max_time:
-		release_charge()
+		# ⚠ 满蓄自动释放：必须把 data 交给 entity 播放动画后发射，否则吞箭+卡死 ATTACK
+		var data = release_charge()
+		if data.size() > 0 and is_instance_valid(owner_entity):
+			owner_entity._charging = false
+			owner_entity._do_charge_release(data)
 
 func start_charge():
 	if is_on_cooldown: return
@@ -52,9 +58,10 @@ func fire_arrow(dir: Vector2, damage: float, speed: float, range: float):
 	arrow.add_child(sprite)
 	var dur = range / max(speed, 1.0)
 	var target_pos = arrow.global_position + dir * range
-	var tween = create_tween()
+	# Tween 绑在箭上：箭被命中释放时 Tween 自动停止，避免回调 lambda 捕获已释放对象
+	var tween = arrow.create_tween()
 	tween.tween_property(arrow, "global_position", target_pos, dur)
-	tween.tween_callback(func(): if is_instance_valid(arrow): arrow.queue_free())
+	tween.tween_callback(arrow.queue_free)
 	_raycast_loop(arrow, dir, damage, dur)
 
 func _raycast_loop(arrow: Node2D, dir: Vector2, damage: float, dur: float):
@@ -69,6 +76,8 @@ func _raycast_loop(arrow: Node2D, dir: Vector2, damage: float, dur: float):
 		var result = space.intersect_ray(query)
 		if result:
 			var body = result.collider
+			if body is Entity and body.team == owner_entity.team:
+				continue  # 友军穿透
 			if body.has_method("take_damage"):
 				body.take_damage(damage)
 			if is_instance_valid(arrow): arrow.queue_free()

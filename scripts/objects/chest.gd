@@ -4,7 +4,7 @@ enum ChestState { CLOSED, MINIGAME, OPENING, OPENED }
 
 var _state: ChestState = ChestState.CLOSED
 var _player_nearby: bool = false
-var _player_entity: CharacterBody2D = null
+var _player_entity: Entity = null
 
 @onready var sprite: Sprite2D = $Sprite2D
 @onready var prompt: Label = $Prompt
@@ -16,12 +16,13 @@ func _ready():
 
 func _input(event):
 	if _state != ChestState.CLOSED or not _player_nearby: return
+	if not is_instance_valid(_player_entity) or _player_entity.health.is_dead: return
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_F:
 		_start_minigame()
 
 func _on_entered(body):
 	# Boss（name 含"Troll"）不可开箱
-	if body is CharacterBody2D and "Troll" not in body.name:
+	if body is Entity and "Troll" not in body.name:
 		_player_nearby = true
 		_player_entity = body
 		if _state == ChestState.CLOSED: prompt.show()
@@ -33,18 +34,24 @@ func _on_exited(body):
 		prompt.hide()
 
 func _start_minigame():
+	if not is_instance_valid(_player_entity) or _player_entity.health.is_dead: return
 	_state = ChestState.MINIGAME
+	# 小游戏期间锁定玩家输入（不能移动/攻击/格挡）
+	_player_entity.stop_blocking()
+	_player_entity.input_locked = true
 	var mg = preload("res://scripts/ui/chest_minigame.gd").new()
 	mg.chest_ref = self
-	if _player_entity and _player_entity.has_method("_cv"):
-		mg.speed = _player_entity._cv("chest_speed")
+	mg.speed = _player_entity._cv("chest_speed")
 	get_tree().current_scene.add_child(mg)
 
 func on_minigame_done(success: bool):
+	var player_ok = is_instance_valid(_player_entity) and not _player_entity.health.is_dead
+	if is_instance_valid(_player_entity):
+		_player_entity.input_locked = false
 	_state = ChestState.OPENING
 	sprite.frame = 1
 	await get_tree().create_timer(0.25).timeout
-	if success:
+	if success and player_ok:
 		sprite.frame = 2
 		_reward()
 	else:
@@ -53,10 +60,10 @@ func on_minigame_done(success: bool):
 	_state = ChestState.OPENED
 
 func _reward():
-	if _player_entity and _player_entity.has_method("take_damage"):
-		var hp = _player_entity.get("health")
-		if hp:
-			hp.current_hp = min(hp.current_hp + hp.max_hp * 0.3, hp.max_hp)
+	GameState.add_gold(GameConfig.chest_gold_amount)
+	if is_instance_valid(_player_entity) and not _player_entity.health.is_dead:
+		var hp = _player_entity.health
+		hp.current_hp = min(hp.current_hp + hp.max_hp * GameConfig.chest_heal_ratio, hp.max_hp)
 	# Godot 4.6 CPUParticles2D：initial_velocity→initial_velocity_min/max
 	# scale_amount→scale_amount_min/max；color→color_initial_ramp（Gradient）
 	var p = CPUParticles2D.new()

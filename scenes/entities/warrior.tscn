@@ -5,7 +5,6 @@
 [ext_resource type="Script" path="res://scripts/components/health_component.gd" id="3_health"]
 [ext_resource type="Script" path="res://scripts/components/slash_ability.gd" id="4_slash"]
 [ext_resource type="Script" path="res://scripts/components/charge_ability.gd" id="5_charge"]
-[ext_resource type="Resource" path="res://resources/stats/warrior_stats.tres" id="6_stats"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_635qg"]
 radius = 23.086792
@@ -114,12 +113,12 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_bjvvg"]
 _data = {
-&"RESET": SubResource("Animation_635qg"),
-&"attack_down": SubResource("Animation_8akj5"),
-&"attack_right": SubResource("Animation_bjvvg"),
-&"attack_up": SubResource("Animation_bj7e2"),
-&"idle": SubResource("Animation_58kc7"),
-&"run": SubResource("Animation_nh4ur")
+	&"RESET": SubResource("Animation_635qg"),
+	&"attack_down": SubResource("Animation_8akj5"),
+	&"attack_right": SubResource("Animation_bjvvg"),
+	&"attack_up": SubResource("Animation_bj7e2"),
+	&"idle": SubResource("Animation_58kc7"),
+	&"run": SubResource("Animation_nh4ur")
 }
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1murt"]
@@ -191,7 +190,6 @@ graph_offset = Vector2(51.03017, 40.529984)
 
 [node name="Warrior" type="CharacterBody2D" unique_id=66721338]
 script = ExtResource("2_entity")
-stats = ExtResource("6_stats")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=114899454]
 position = Vector2(0, -33)

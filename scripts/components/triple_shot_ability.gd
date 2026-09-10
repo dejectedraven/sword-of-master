@@ -35,9 +35,10 @@ func _fire_arrow(dir: Vector2, damage: float, speed: float, range: float):
 
 	var dur = range / max(speed, 1.0)
 	var target_pos = arrow.global_position + dir * range
-	var tween = create_tween()
+	# Tween 绑在箭上：箭被命中释放时 Tween 自动停止，避免回调 lambda 捕获已释放对象
+	var tween = arrow.create_tween()
 	tween.tween_property(arrow, "global_position", target_pos, dur)
-	tween.tween_callback(func(): if is_instance_valid(arrow): arrow.queue_free())
+	tween.tween_callback(arrow.queue_free)
 
 	_raycast_loop(arrow, dir, damage, dur)
 
@@ -53,6 +54,8 @@ func _raycast_loop(arrow: Node2D, dir: Vector2, damage: float, dur: float):
 		var result = space.intersect_ray(query)
 		if result:
 			var body = result.collider
+			if body is Entity and body.team == owner_entity.team:
+				continue  # 友军穿透
 			if body.has_method("take_damage"):
 				body.take_damage(damage)
 			if is_instance_valid(arrow): arrow.queue_free()

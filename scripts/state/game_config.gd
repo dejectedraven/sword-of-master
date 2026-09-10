@@ -122,6 +122,9 @@ var archer_ai_triple_range: float = 150.0       # 三连射触发距离 (px)
 
 # ═══════════ 宝箱 (Chest) ═══════════
 
+var chest_gold_amount: int = 50       # 开宝箱获得金币
+var escape_gold_threshold: int = 100  # 逃生门所需金币
+
 var chest_speed: float = 120.0       # 指针对位初始速度 px/s
 var chest_zone_size: float = 30.0    # 成功判定偏移量 (±px)
 var chest_heal_ratio: float = 0.3    # 治疗比例 (最大HP)
