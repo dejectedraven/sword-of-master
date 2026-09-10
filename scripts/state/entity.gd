@@ -86,6 +86,11 @@ func _create_vision_light():
 	l.name = "VisionLight"
 	l.configure(_cv("vision_radius"), GameConfig.vision_light_energy, true, GameConfig.vision_light_color)
 	add_child(l)
+	# 自照小光：不投影，保证角色站在树影/树冠下也可见
+	var self_l = VisionLight.new()
+	self_l.name = "SelfLight"
+	self_l.configure(GameConfig.self_light_radius, GameConfig.self_light_energy, false, GameConfig.vision_light_color)
+	add_child(self_l)
 
 # ⚠ 必须每个 _try_*() 的 await 后加 if health.is_dead: return，否则 coroutine 会重置 state 覆盖 DEAD
 func _physics_process(_d: float):

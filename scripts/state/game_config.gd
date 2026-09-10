@@ -132,6 +132,8 @@ var night_color: Color = Color(0.07, 0.08, 0.15)  # 夜色浓度（越暗视野�
 var camera_zoom: float = 1.0                       # 相机缩放（1.0 = 原始比例，角色周身可见即可）
 var vision_light_energy: float = 0.95              # 视野光强度（过高角色会过曝发白）
 var vision_light_color: Color = Color(1.0, 0.96, 0.85)  # 视野光颜色（暖色像火把）
+var self_light_radius: float = 70.0                # 角色自照小光半径（不投影，保证树影下也看得见角色）
+var self_light_energy: float = 0.8                 # 角色自照光强度
 var chest_glow_radius: float = 70.0                # 宝箱微弱自发光半径（黑暗中可辨认）
 var chest_glow_energy: float = 0.5                 # 宝箱自发光强度
 var warrior_vision_radius: float = 220.0           # 战士视野光圈半径 px

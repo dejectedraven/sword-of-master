@@ -15,6 +15,7 @@ extends Node2D
 @export var collision_offset_y: float = -10.0
 @export var occluder_points: PackedVector2Array = PackedVector2Array()  # 遮挡多边形（贴图比例坐标 0~1，需凸多边形）
 @export var sway_interval: float = 0.15   # 摇摆帧切换间隔（秒）
+@export var fade_when_behind: bool = false # 玩家躲到后面时淡出（避免遮挡角色）
 
 var _sprite: Sprite2D
 var _timer: float = 0.0
@@ -59,8 +60,20 @@ func _ready():
 		add_child(occ)
 
 func _process(delta):
-	if frames <= 1 or not _sprite: return
-	_timer += delta
-	if _timer >= sway_interval:
-		_timer = 0.0
-		_sprite.frame = (_sprite.frame + 1) % frames
+	if not _sprite: return
+	if frames > 1:
+		_timer += delta
+		if _timer >= sway_interval:
+			_timer = 0.0
+			_sprite.frame = (_sprite.frame + 1) % frames
+	# 玩家躲到障碍物后面时淡出，避免树冠/灌木盖住角色
+	if fade_when_behind:
+		var target_a = 1.0
+		var cam = get_viewport().get_camera_2d()
+		var focus = cam.get_parent() if cam else null
+		if focus is Entity:
+			var canopy = global_position + Vector2(0, _sprite.offset.y)
+			var radius = float(_sprite.texture.get_height()) * 0.5
+			if focus.global_position.distance_to(canopy) < radius and focus.global_position.y < global_position.y:
+				target_a = 0.35
+		_sprite.modulate.a = lerp(_sprite.modulate.a, target_a, delta * 8.0)

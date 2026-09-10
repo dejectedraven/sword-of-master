@@ -150,6 +150,7 @@ func _add_obstacle(kind: String, x: float, y: float):
 			prefix = "res://assets/environment/props/trees/Tree"
 			frames = 8
 			cfg = {"base_ratio": 0.9, "collision_size": Vector2(34, 20), "collision_offset_y": -10.0,
+				"fade_when_behind": true,
 				"occluder_points": PackedVector2Array([
 					Vector2(0.5, 0.06), Vector2(0.06, 0.85), Vector2(0.94, 0.85)])}
 		"stump":
@@ -166,7 +167,7 @@ func _add_obstacle(kind: String, x: float, y: float):
 		"bush":
 			prefix = "res://assets/environment/props/bushes/Bush"
 			frames = 8
-			cfg = {"base_ratio": 0.85, "blocks_movement": false,
+			cfg = {"base_ratio": 0.85, "blocks_movement": false, "fade_when_behind": true,
 				"occluder_points": PackedVector2Array([
 					Vector2(0.5, 0.1), Vector2(0.92, 0.4), Vector2(0.85, 0.85),
 					Vector2(0.15, 0.85), Vector2(0.08, 0.4)])}

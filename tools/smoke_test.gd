@@ -61,8 +61,10 @@ func _run():
 	_check(scene.get_node_or_null("Night") != null, "夜色 CanvasModulate 存在")
 	if player:
 		_check(player.get_node_or_null("VisionLight") != null, "玩家有视野光")
+		_check(player.get_node_or_null("SelfLight") != null, "玩家有自照光（树影下可见）")
 	if troll:
 		_check(troll.get_node_or_null("VisionLight") == null, "AI 巨魔无视野光（藏黑暗中）")
+		_check(troll.get_node_or_null("SelfLight") == null, "AI 巨魔无自照光")
 	if scene.ai_allies.size() > 0:
 		_check(scene.ai_allies[0].get_node_or_null("VisionLight") != null, "AI 队友有视野光")
 	var p_cam = player.get_node_or_null("Camera2D") if player else null
